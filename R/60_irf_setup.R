@@ -26,7 +26,7 @@
 #' @param identification Logical scalar. Whether or not the shocks used for
 #' calculating impulses should be identified. Defaults to \code{TRUE}, i.e.
 #' identification via Cholesky decomposition of the VCOV-matrix unless
-#' \emph{sign_restr} is provided.
+#' \emph{sign_restr} or \emph{instrument} is provided.
 #' @param sign_restr Elements inform about expected impacts
 #' of certain shocks. Can be either \eqn{1}, \eqn{-1} or \eqn{0} depending
 #' on whether a positive, a negative or no contemporaneous effect of a
@@ -37,6 +37,7 @@
 #' \eqn{M - j} zero restrictions can be imposed on the \eqn{j}'th column.
 #' @param sign_lim Integer scalar. Maximum number of tries to find suitable
 #' matrices to for fitting sign or zero and sign restrictions.
+#' @param instrument If provided, the identification is performed using proxy VAR.
 #'
 #' @return Returns a named list of class \code{bv_irf} with options for
 #' \code{\link{bvar}}, \code{\link{irf.bvar}} or \code{\link{fevd.bvar}}.
@@ -78,7 +79,8 @@ bv_irf <- function(
   fevd = FALSE,
   identification = TRUE,
   sign_restr = NULL,
-  sign_lim = 1000) {
+  sign_lim = 1000,
+  instrument = NULL)  {
 
   # Input checks
   horizon <- int_check(horizon, min = 1, max = 1e6,
@@ -121,7 +123,8 @@ bv_irf <- function(
   out <- list("horizon" = horizon, "fevd" = fevd,
     "identification" = identification,
     "sign_restr" = sign_restr, "zero" = zero,
-    "sign_lim" = sign_lim
+    "sign_lim" = sign_lim,
+    "instrument" = instrument
   )
 
   class(out) <- "bv_irf"
