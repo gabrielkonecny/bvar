@@ -52,7 +52,8 @@ compute_irf <- function(
         sign_restr = sign_restr, M = M, sign_lim = sign_lim, zero = zero)
         } else{
           shock <- diag(M)
-          shock[,1] <- iv_stats(y$residuals, y$instrument)$impact
+          shock[,1] <- iv_stats(residuals_instrument_intersection$residuals,
+                                residuals_instrument_intersection$instrument)$impact
       }
     }
   } else {shock <- sigma}
