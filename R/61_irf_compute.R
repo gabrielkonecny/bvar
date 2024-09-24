@@ -44,11 +44,16 @@ compute_irf <- function(
   # Identification
   if(identification) {
     sigma_chol <- t(chol(sigma))
-    if(is.null(sign_restr)) {
+    if(is.null(sign_restr) & is.null(instrument)) {
       shock <- sigma_chol
     } else {
-      shock <- sign_restr(sigma_chol = sigma_chol,
+        if(is.null(instrument)){
+        shock <- sign_restr(sigma_chol = sigma_chol,
         sign_restr = sign_restr, M = M, sign_lim = sign_lim, zero = zero)
+        } else{
+          shock <- diag(M)
+          shock[,1] <- iv_stats(y$residuals, y$instrument)$impact
+      }
     }
   } else {shock <- sigma}
 

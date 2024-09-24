@@ -3,17 +3,20 @@
 # If IV is longer than residuals, using it as input should be prohibited at
 # input level, if desired.
 
+residuals <- resid(x)[,1:3]
+instrument
+
 intersect_vectors_by_date <- function(residuals, instrument) {
 
   # Get the dates (names) of both vectors
-  dates_residuals <- names(residuals)
+  dates_residuals <- rownames(residuals)
   dates_instrument <- names(instrument)
 
   # Find the intersection of dates (common dates in both vectors)
   common_dates <- intersect(dates_residuals, dates_instrument)
 
   # Shorten both vectors to the common dates
-  residuals_shortened <- residuals[common_dates]
+  residuals_shortened <- residuals[common_dates,]
   instrument_shortened <- instrument[common_dates]
 
   # Return the shortened vectors
@@ -28,7 +31,7 @@ intersect_vectors_by_date <- function(residuals, instrument) {
 iv_stats <- function(residuals, instrument){
   # Coefficients of regression on instrument
   library(Matrix)
-  residuals <- residuals
+  #residuals <- residuals
 
   t <- nrow(residuals)
   n <- ncol(residuals)
@@ -127,23 +130,23 @@ iv_stats <- function(residuals, instrument){
   iP <- 1 #instrument position
   # Load output structure
 
-  res.B = matrix(NA, n, m)      # contemporaneous transmission coefficients: Bzero
-  res.B[iP,] <- B[1:m]
-  res.B[(iP+1):n,] <- B[(m + 1):n]
+  impact = matrix(NA, n, m)      # contemporaneous transmission coefficients: Bzero
+  impact[iP,] <- B[1:m]
+  impact[(iP+1):n,] <- B[(m + 1):n]
 
   #normalize
-  res.B <- res.B / res.B[1]
+  impact <- impact / impact[1]
 
 
   #Summary
-  # res.B = res.B,             # contemporaneous transmission coefficients: Bzero
+  # impact = impact,             # contemporaneous transmission coefficients: Bzero
   # Gamma = Gamma,             # estimated correlation between shock and instrument
   # L = Lambda,                # reliability of instrument
   # e = e,                     # realized shocks series
   # fstat = diag(F_Stat)       # F statistic of regression on instrument
 
-  output <- list(res.B, Gamma, F_Stat, Lambda)
-  names(output) <- c("res.B", "Gamma", "F_Stat", "Lambda")
+  output <- list(impact, Gamma, F_Stat, Lambda)
+  names(output) <- c("impact", "Gamma", "F_Stat", "Lambda")
 
   return(output)
 }

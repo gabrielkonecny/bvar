@@ -104,6 +104,12 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
       stop("Dimensions of provided restrictions do not fit the data.")
     }
 
+    #Instrument
+    if(!is.null(instrument)){
+      # For identification, if IV is shorter than residuals, subset residuals.
+      residuals_instrument_intersection <- intersect_vectors_by_date(resid(x)[,1:M], instrument) #From 62b_proxy_var.R
+    }
+
     # Sampling ---
 
     irf_store <- structure(list(
