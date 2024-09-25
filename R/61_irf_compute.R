@@ -41,6 +41,8 @@ compute_irf <- function(
   identification,
   sign_restr, zero = FALSE, sign_lim = 10000) {
 
+
+
   # Identification
   if(identification) {
     sigma_chol <- t(chol(sigma))

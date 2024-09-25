@@ -37,7 +37,15 @@
 #' \eqn{M - j} zero restrictions can be imposed on the \eqn{j}'th column.
 #' @param sign_lim Integer scalar. Maximum number of tries to find suitable
 #' matrices to for fitting sign or zero and sign restrictions.
-#' @param instrument If provided, the identification is performed using proxy VAR.
+#' @param instrument If provided, the identification is performed using proxy
+#' VAR. If the length of the \emph{instrument} and length of the residuals
+#' differ, their intersection based on dates is used. The dates can be provided
+#' by specifying \emph{start_date} and \emph{frequency}.
+#' @param start_date Starting date of the instrument in form "YYYY-MM-DD".
+#' Required only for SVAR identified with an external instrument.
+#' @param frequency Frequency of the instrument: "year", "month" or "day".
+#' Required only for SVAR identified with an external instrument.
+#'
 #'
 #' @return Returns a named list of class \code{bv_irf} with options for
 #' \code{\link{bvar}}, \code{\link{irf.bvar}} or \code{\link{fevd.bvar}}.
@@ -80,7 +88,9 @@ bv_irf <- function(
   identification = TRUE,
   sign_restr = NULL,
   sign_lim = 1000,
-  instrument = NULL)  {
+  instrument = NULL,
+  start_date = NULL,
+  frequency = NULL)  {
 
   # Input checks
   horizon <- int_check(horizon, min = 1, max = 1e6,
@@ -119,6 +129,19 @@ bv_irf <- function(
     # Cholesky
 
   }
+
+  # Dates to rownames ----
+
+  # Create a sequence of dates and assign to rownames from user input
+  if(!is.null(start_date) & !is.null(frequency)) {
+    names(instrument) <- seq(as.Date(start_date), by = frequency, length.out = length(instrument))
+  } else if(is.null(start_date) & !is.null(frequency)) {
+    stop("Error: 'start_date' must be specified when 'frequency' is provided.")
+  } else if(!is.null(start_date) & is.null(frequency)) {
+    stop("Error: 'frequency' must be specified when 'start_date' is provided.")
+  } else {}
+
+
 
   # Outputs
   out <- list("horizon" = horizon, "fevd" = fevd,

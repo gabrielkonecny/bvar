@@ -1,4 +1,22 @@
-library("BVAR")
+# List all .R files in the subdirectory
+r_files <- list.files(path = "R", pattern = "\\.R$", full.names = TRUE)
+
+# Filter only the files that start with a number
+r_files <- r_files[grepl("^\\d", basename(r_files))]
+
+
+for (file in r_files) {
+  tryCatch({
+    source(file)
+    message("Successfully sourced: ", file)
+  }, error = function(e) {
+    message("Error in file: ", file)
+    # You can also print the error message if you want
+    # message("Error message: ", e$message)
+  })
+}
+
+#library("BVAR")
 
 # Access a subset of the fred_qd dataset
 data <- fred_md[, c("GS1", "INDPRO","CPIAUCSL", "UNRATE")]
@@ -54,17 +72,20 @@ tail(subset_data)
 
 data <- subset_data
 
+head(data)
+tail(data)
 
-# Transform it to be stationary
+rownames(data) <- NULL
+data
+
+
+# Transform data
 data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
-#data <- fred_transform(data, codes = c(4, 4, 1))
 
-# Estimate a BVAR using one lag, default settings and very few draws
-x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
 
-# Compute + store IRF with a longer horizon, no identification and thinning
-#irf(x) <- irf(x, bv_irf(horizon = 24L, identification = FALSE), n_thin = 5L)
-
+# Estimate a BVAR
+x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T, start_date = "1979-01-01", frequency = "month")
+resid(x)[,1:5]
 
 library(readxl)
 
@@ -74,12 +95,15 @@ instrument_data$date <- as.Date(paste0(instrument_data$date, "01"), format = "%Y
 
 # Create a vector using dates as names
 instrument <- setNames(instrument_data$MPI, as.character(instrument_data$date))
-
+names(instrument) <- NULL
 # For identification, if IV is shorter than residuals, subset residuals.
 # y <- intersect_vectors_by_date(resid(x)[,1:5], instrument) #From 62b_proxy_var.R
 # y
 
-irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE, instrument = instrument), n_thin = 5L)
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE,
+          instrument = instrument, start_date = "1991-01-01",
+          frequency = "month"), n_thin = 1L)
+
 #u <- resid(x)
 plot(irf(x))
 

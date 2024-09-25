@@ -3,8 +3,6 @@
 # If IV is longer than residuals, using it as input should be prohibited at
 # input level, if desired.
 
-residuals <- resid(x)[,1:3]
-instrument
 
 intersect_vectors_by_date <- function(residuals, instrument) {
 

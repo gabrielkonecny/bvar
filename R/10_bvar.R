@@ -50,6 +50,10 @@
 #' May also be calculated ex-post using \code{\link{irf.bvar}}.
 #' @param verbose Logical scalar. Whether to print intermediate results and
 #' progress.
+#' @param start_date Starting date of the data in form "YYYY-MM-DD". Required
+#' only for SVAR identified with an external instrument.
+#' @param frequency Frequency of the data: "year", "month" or "day". Required
+#' only for SVAR identified with an external instrument.
 #' @param ... Not used.
 #'
 #' @return Returns a list of class \code{bvar} with the following elements:
@@ -127,10 +131,24 @@ bvar <- function(
   mh = bv_mh(),
   fcast = NULL,
   irf = NULL,
-  verbose = TRUE, ...) {
+  verbose = TRUE,
+  start_date = NULL,
+  frequency = NULL, ...) {
 
   cl <- match.call()
   start_time <- Sys.time()
+
+
+
+  # Create a sequence of dates and assign to rownames from user input
+  if(!is.null(start_date) & !is.null(frequency)) {
+    # If both start_date and frequency are provided, proceed with renaming row names
+    rownames(data) <- seq(as.Date(start_date), by = frequency, length.out = nrow(data))
+  } else if(is.null(start_date) & !is.null(frequency)) {
+    stop("Error: 'start_date' must be specified when 'frequency' is provided.")
+  } else if(!is.null(start_date) & is.null(frequency)) {
+    stop("Error: 'frequency' must be specified when 'start_date' is provided.")
+  } else {}
 
 
   # Setup and checks -----
