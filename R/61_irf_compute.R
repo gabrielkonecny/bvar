@@ -39,7 +39,8 @@ compute_irf <- function(
   M, lags,
   horizon,
   identification,
-  sign_restr, zero = FALSE, sign_lim = 10000) {
+  sign_restr, zero = FALSE, sign_lim = 10000,
+  residuals = NULL, instrument = NULL) {
 
 
 
@@ -48,15 +49,17 @@ compute_irf <- function(
     sigma_chol <- t(chol(sigma))
     if(is.null(sign_restr) & is.null(instrument)) {
       shock <- sigma_chol
-    } else {
-        if(is.null(instrument)){
-        shock <- sign_restr(sigma_chol = sigma_chol,
-        sign_restr = sign_restr, M = M, sign_lim = sign_lim, zero = zero)
-        } else{
+    }
+    if(!is.null(sign_restr) & is.null(instrument)){
+    shock <- sign_restr(sigma_chol = sigma_chol,
+    sign_restr = sign_restr, M = M, sign_lim = sign_lim, zero = zero)
+    }
+    if(is.null(sign_restr) & !is.null(instrument)){
           shock <- diag(M)
-          shock[,1] <- iv_stats(residuals_instrument_intersection$residuals,
-                                residuals_instrument_intersection$instrument)$impact
-      }
+          shock[,1] <- iv_stats(residuals,instrument)$impact
+    }
+    if(!is.null(sign_restr) & !is.null(instrument)){
+    stop("Sign restrictions and instrument cannot be used at the same time!")
     }
   } else {shock <- sigma}
 

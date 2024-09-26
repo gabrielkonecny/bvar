@@ -37,8 +37,9 @@
 #' \eqn{M - j} zero restrictions can be imposed on the \eqn{j}'th column.
 #' @param sign_lim Integer scalar. Maximum number of tries to find suitable
 #' matrices to for fitting sign or zero and sign restrictions.
-#' @param instrument If provided, the identification is performed using proxy
-#' VAR. If the length of the \emph{instrument} and length of the residuals
+#' @param instrument Numeric vector. If provided, the identification is performed using proxy
+#' VAR. Multiple instruments are not supported at the moment.
+#' If the length of the \emph{instrument} and length of the residuals
 #' differ, their intersection based on dates is used. The dates can be provided
 #' by specifying \emph{start_date} and \emph{frequency}.
 #' @param start_date Starting date of the instrument in form "YYYY-MM-DD".
@@ -130,7 +131,14 @@ bv_irf <- function(
 
   }
 
-  # Dates to rownames ----
+  # IV
+
+  if(!is.null(instrument)){
+    if (is.numeric(instrument)) {
+    } else {
+      stop("Input must be a numeric vector. Multiple instruments are not supported at the moment.")
+    }
+  }
 
   # Create a sequence of dates and assign to rownames from user input
   if(!is.null(start_date) & !is.null(frequency)) {

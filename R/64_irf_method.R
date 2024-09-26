@@ -73,7 +73,6 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
   dots <- list(...)
   irf_store <- x[["irf"]]
   verbose <- isTRUE(verbose)
-  instrument <- dots[["instrument"]]
 
   # Calculate impulse responses -----
 
@@ -84,6 +83,7 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
     irf <- if(length(dots) > 0 && inherits(dots[[1]], "bv_irf")) {
       dots[[1]]
     } else {bv_irf(...)}
+
 
     n_pres <- x[["meta"]][["n_save"]]
     n_thin <- int_check(n_thin, min = 1, max = (n_pres / 10),
@@ -104,13 +104,17 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
       stop("Dimensions of provided restrictions do not fit the data.")
     }
 
+    instrument <- irf[["instrument"]]
 
-
-    #Instrument
     if(!is.null(instrument)){
       # For identification, if IV is shorter than residuals, subset residuals.
-      residuals_instrument_intersection <- intersect_vectors_by_date(resid(x)[,1:ncol(resid(x))], instrument) #From 62b_proxy_var.R
-    }
+      #From 62b_proxy_var.R
+      intersection <- intersect_vectors_by_date(resid(x)[,1:ncol(resid(x))], instrument)
+    } else{
+      intersection <- list()
+      intersection$residuals <- NULL
+      intersection$instrument <- NULL
+     }
 
     # Sampling ---
 
@@ -134,7 +138,9 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         beta_comp = beta_comp, sigma = sigma[j, , ], M = M, lags = lags,
         horizon = irf[["horizon"]], identification = irf[["identification"]],
         sign_restr = irf[["sign_restr"]], zero = irf[["zero"]],
-        sign_lim = irf[["sign_lim"]])
+        sign_lim = irf[["sign_lim"]],
+        residuals = intersection$residuals,
+        instrument = intersection$instrument)
       irf_store[["irf"]][i, , , ] <- irf_comp
 
       if(irf[["fevd"]]) { # Forecast error variance decomposition

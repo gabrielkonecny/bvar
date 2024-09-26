@@ -27,13 +27,11 @@ intersect_vectors_by_date <- function(residuals, instrument) {
 #instrument: Instrument has to be the same length as the residuals
 
 iv_stats <- function(residuals, instrument){
-  # Coefficients of regression on instrument
   library(Matrix)
-  #residuals <- residuals
 
   t <- nrow(residuals)
   n <- ncol(residuals)
-  m <- 1 #only m=1 instrument
+  m <- 1 #only m=1 instrument implemented at the moment
 
   # Create the Kronecker product
   eye_n <- Matrix(diag(rep(1, n)), sparse = TRUE)
@@ -84,7 +82,7 @@ iv_stats <- function(residuals, instrument){
 
   #Since we only have 1 instrument
   B11 <- sqrt(B11B11)   # beta_{11}
-  B <- B11 * c(1, B21B11)  # first column of B (u_t = B * e_t)
+  B <- as.vector(B11) * c(1, B21B11)  # first column of B (u_t = B * e_t)
 
   ###########################
   #%realized shock sequences (Montiel-Olea, Stock and Watson)
