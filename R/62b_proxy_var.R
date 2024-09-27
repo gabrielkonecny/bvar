@@ -54,7 +54,7 @@ iv_stats <- function(residuals, instrument){
   tempY <- tempX %*% betaIV[1:m, ] - matrix(rep(mean(residuals[, 1:m]), t), ncol = m, byrow = TRUE)
   k <- length(betaIV[1:m, ]) - 1
 
-  F_Stat <- ((t(tempY) %*% tempY) / k) / ((t(tempU) %*% tempU) / (t - k - 1))
+  f_stat <- ((t(tempY) %*% tempY) / k) / ((t(tempU) %*% tempU) / (t - k - 1))
 
 
   ################
@@ -139,10 +139,10 @@ iv_stats <- function(residuals, instrument){
   # Gamma = Gamma,             # estimated correlation between shock and instrument
   # L = Lambda,                # reliability of instrument
   # e = e,                     # realized shocks series
-  # fstat = diag(F_Stat)       # F statistic of regression on instrument
+  # fstat = diag(f_stat)       # F statistic of regression on instrument
 
-  output <- list(impact, Gamma, F_Stat, Lambda)
-  names(output) <- c("impact", "Gamma", "F_Stat", "Lambda")
+  output <- list(impact, Gamma, f_stat, Lambda)
+  names(output) <- c("impact", "Gamma", "f_stat", "Lambda")
 
   return(output)
 }

@@ -1,9 +1,6 @@
 #Load functions ----
 r_files <- list.files(path = "R", pattern = "\\.R$", full.names = TRUE)
 
-# Filter only the files that start with a number
-r_files <- c(r_files[grepl("^\\d", basename(r_files))],"R/62b_proxy_VAR.R")
-
 for (file in r_files) {
   tryCatch({
     source(file)
@@ -13,8 +10,6 @@ for (file in r_files) {
   })
 }
 
-
-
 # Example 1 - dates provided in rownames ----
 
 data <- readRDS(data, file = "./data/data_with_ebp.rds")
@@ -23,8 +18,7 @@ instrument <- readRDS(file = "./data/instrument_MAR21.rds")
 # In case of correctly provided rownames:
 data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
 x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
-irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE,
-                             instrument = instrument), n_thin = 1L)
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE, instrument = instrument), n_thin = 1L)
 plot(irf(x)) # Here, only instrumented shock should be displayed,
 # other shocks are not sensibly identified (= garbage)
 

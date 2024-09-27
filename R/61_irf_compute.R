@@ -71,5 +71,12 @@ compute_irf <- function(
   }
   irf_comp <- irf_comp[1:M, , 1:M]
 
-  return(irf_comp)
+  output <- list()
+  output$irf_comp <- irf_comp
+
+
+  output$iv_f_stat <- if(!is.null(instrument)){
+    iv_stats(residuals,instrument)$f_stat} else{NULL}
+
+  return(output)
 }

@@ -51,8 +51,19 @@ print.bvar_fevd <- function(x, digits = 4L, complete = FALSE, ...) {
   cat("\nIdentification: ")
   if(x[["identification"]]) {
     if(is.null(x[["sign_restr"]])) {
+      if(is.null(x[["instrument"]])) {
       cat("Cholesky decomposition")
-    } else {
+      } else{cat("External Instrument"
+                 # ,
+                 # "\nFirst stage F-statistic (95% CI): ",
+                 # x[["irf"]][["iv_stats"]][["f_stat"]]$quantiles[3],
+                 # "(",
+                 # x[["irf"]][["iv_stats"]][["f_stat"]]$quantiles[1], ",",
+                 # x[["irf"]][["iv_stats"]][["f_stat"]]$quantiles[5],
+                 # ")"
+                 )
+        }
+    } else{
       cat("Sign restrictions", "\nChosen restrictions:\n", sep = "")
       sign_restr <- apply(x[["sign_restr"]], 2, factor,
         levels = c(-1, 0, 1), labels = c("-", "0", "+"))

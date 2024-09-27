@@ -83,13 +83,14 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
     irf <- if(length(dots) > 0 && inherits(dots[[1]], "bv_irf")) {
       dots[[1]]
     } else {bv_irf(...)}
-
+    instrument <- irf[["instrument"]]
 
     n_pres <- x[["meta"]][["n_save"]]
     n_thin <- int_check(n_thin, min = 1, max = (n_pres / 10),
       "Issue with n_thin. Maximum allowed is n_save / 10.")
     n_save <- int_check((n_pres / n_thin), min = 1)
 
+    X <- x[["meta"]][["X"]]
     Y <- x[["meta"]][["Y"]]
     N <- x[["meta"]][["N"]]
     K <- x[["meta"]][["K"]]
@@ -97,6 +98,11 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
     lags <- x[["meta"]][["lags"]]
     beta <- x[["beta"]]
     sigma <- x[["sigma"]]
+    #For the case we need to reorder due to using IV
+    vars <- name_deps(x[["variables"]], M = M)
+    vars_expl <- name_expl(vars, M = M, lags = lags)
+    dimnames(beta) <- list(NULL, vars_expl, vars)
+
 
     # Check sign restrictions
     if(!is.null(irf[["sign_restr"]]) && length(irf[["sign_restr"]]) != M ^ 2 ||
@@ -104,17 +110,7 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
       stop("Dimensions of provided restrictions do not fit the data.")
     }
 
-    instrument <- irf[["instrument"]]
 
-    if(!is.null(instrument)){
-      # For identification, if IV is shorter than residuals, subset residuals.
-      #From 62b_proxy_var.R
-      intersection <- intersect_vectors_by_date(resid(x)[,1:ncol(resid(x))], instrument)
-    } else{
-      intersection <- list()
-      intersection$residuals <- NULL
-      intersection$instrument <- NULL
-     }
 
     # Sampling ---
 
@@ -124,7 +120,10 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         structure(
           list("fevd" = array(NA, c(n_save, M, irf[["horizon"]], M)),
             "variables" = x[["variables"]]), class = "bvar_fevd")
-      } else {NULL}, "setup" = irf, "variables" = x[["variables"]]),
+      } else {NULL}, "setup" = irf, "variables" = x[["variables"]],
+      "iv_stats" = if(!is.null(instrument)){
+        list("f_stat_store" = array(NA, n_save), "f_stat" = list())
+        } else {NULL}),
       class = "bvar_irf")
 
     j <- 1
@@ -134,14 +133,27 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
     }
     for(i in seq_len(n_save)) {
       beta_comp <- get_beta_comp(beta[j, , ], K, M, lags)
-      irf_comp  <- compute_irf(
+
+      if(!is.null(instrument)){
+        # For identification, if IV is shorter than residuals, subset residuals.
+        #From 62b_proxy_var.R
+        residuals_draw <- Y - X %*% beta[j, , ]
+        intersection <- intersect_vectors_by_date(residuals_draw, instrument)
+      } else{
+        intersection <- list()
+        intersection$residuals <- NULL
+        intersection$instrument <- NULL
+      }
+      output  <- compute_irf(
         beta_comp = beta_comp, sigma = sigma[j, , ], M = M, lags = lags,
         horizon = irf[["horizon"]], identification = irf[["identification"]],
         sign_restr = irf[["sign_restr"]], zero = irf[["zero"]],
         sign_lim = irf[["sign_lim"]],
         residuals = intersection$residuals,
         instrument = intersection$instrument)
+      irf_comp <- output$irf_comp
       irf_store[["irf"]][i, , , ] <- irf_comp
+      irf_store[["iv_stats"]][["f_stat_store"]][i] <- output$iv_f_stat
 
       if(irf[["fevd"]]) { # Forecast error variance decomposition
         irf_store[["fevd"]][["fevd"]][i, , , ] <- compute_fevd(
@@ -171,6 +183,13 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
     }
   }
 
+
+  f_stats <- quantile(irf_store[["iv_stats"]][["f_stat_store"]], c(0.025, 0.05,0.5,0.95, 0.975))
+
+  irf_store[["iv_stats"]][["f_stat"]] <- list(
+    "quantiles" = round(f_stats,2)
+    #"conf_interval (90%)" = c(lower = 1.8, upper = 3.2)
+  )
 
   return(irf_store)
 }
