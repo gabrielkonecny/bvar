@@ -12,7 +12,7 @@ bv_minnesota(
   lambda = bv_lambda(),
   alpha = bv_alpha(),
   psi = bv_psi(),
-  var = 10000000,
+  var = 1e+07,
   b = 1
 )
 
@@ -20,11 +20,11 @@ bv_mn(
   lambda = bv_lambda(),
   alpha = bv_alpha(),
   psi = bv_psi(),
-  var = 10000000,
+  var = 1e+07,
   b = 1
 )
 
-bv_lambda(mode = 0.2, sd = 0.4, min = 0.0001, max = 5)
+bv_lambda(mode = 0.2, sd = 0.4, min = 1e-04, max = 5)
 
 bv_alpha(mode = 2, sd = 0.25, min = 1, max = 3)
 

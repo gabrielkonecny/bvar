@@ -6,11 +6,11 @@
 \alias{bv_sur}
 \title{Dummy prior settings}
 \usage{
-bv_dummy(mode = 1, sd = 1, min = 0.0001, max = 5, fun)
+bv_dummy(mode = 1, sd = 1, min = 1e-04, max = 5, fun)
 
-bv_soc(mode = 1, sd = 1, min = 0.0001, max = 50)
+bv_soc(mode = 1, sd = 1, min = 1e-04, max = 50)
 
-bv_sur(mode = 1, sd = 1, min = 0.0001, max = 50)
+bv_sur(mode = 1, sd = 1, min = 1e-04, max = 50)
 }
 \arguments{
 \item{mode, sd}{Numeric scalar. Mode / standard deviation of the

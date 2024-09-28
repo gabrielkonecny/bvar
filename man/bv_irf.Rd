@@ -9,7 +9,10 @@ bv_irf(
   fevd = FALSE,
   identification = TRUE,
   sign_restr = NULL,
-  sign_lim = 1000
+  sign_lim = 1000,
+  instrument = NULL,
+  start_date = NULL,
+  frequency = NULL
 )
 }
 \arguments{
@@ -23,7 +26,7 @@ decompositions should be calculated.}
 \item{identification}{Logical scalar. Whether or not the shocks used for
 calculating impulses should be identified. Defaults to \code{TRUE}, i.e.
 identification via Cholesky decomposition of the VCOV-matrix unless
-\emph{sign_restr} is provided.}
+\emph{sign_restr} or \emph{instrument} is provided.}
 
 \item{sign_restr}{Elements inform about expected impacts
 of certain shocks. Can be either \eqn{1}, \eqn{-1} or \eqn{0} depending
@@ -36,6 +39,18 @@ value is \code{NULL}. Note that in order to be fully identified at least
 
 \item{sign_lim}{Integer scalar. Maximum number of tries to find suitable
 matrices to for fitting sign or zero and sign restrictions.}
+
+\item{instrument}{Numeric vector. If provided, the identification is performed using proxy
+VAR. Multiple instruments are not supported at the moment.
+If the length of the \emph{instrument} and length of the residuals
+differ, their intersection based on dates is used. The dates can be provided
+by specifying \emph{start_date} and \emph{frequency}.}
+
+\item{start_date}{Starting date of the instrument in form "YYYY-MM-DD".
+Required only for SVAR identified with an external instrument.}
+
+\item{frequency}{Frequency of the instrument: "year", "month" or "day".
+Required only for SVAR identified with an external instrument.}
 }
 \value{
 Returns a named list of class \code{bv_irf} with options for

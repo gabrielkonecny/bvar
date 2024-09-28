@@ -1,19 +1,17 @@
-# IV and u might have different length, intersect them to achieve identification
+#Instrument has to be the same length as the residuals
+# If IV and residuals have different length, intersect them to achieve identification
 # using a subset of observations from reduced form residuals.
-# If IV is longer than residuals, using it as input should be prohibited at
-# input level, if desired.
-
 
 intersect_vectors_by_date <- function(residuals, instrument) {
 
-  # Get the dates (names) of both vectors
+  # Get the dates (names)
   dates_residuals <- rownames(residuals)
   dates_instrument <- names(instrument)
 
-  # Find the intersection of dates (common dates in both vectors)
+  # Find the intersection of dates (common dates)
   common_dates <- intersect(dates_residuals, dates_instrument)
 
-  # Shorten both vectors to the common dates
+  # Shorten both objects to the common dates
   residuals_shortened <- residuals[common_dates,]
   instrument_shortened <- instrument[common_dates]
 
@@ -21,12 +19,7 @@ intersect_vectors_by_date <- function(residuals, instrument) {
   return(list(residuals = residuals_shortened, instrument = instrument_shortened))
 }
 
-
-#Translated from Matlab in R by Gabriel Konecny from Agrippino Ricco 21 Transmission of MP shocks
-
-#instrument: Instrument has to be the same length as the residuals
-
-iv_stats <- function(residuals, instrument){
+proxy_svar <- function(residuals, instrument){
   library(Matrix)
 
   t <- nrow(residuals)
@@ -94,7 +87,7 @@ iv_stats <- function(residuals, instrument){
   # Calculate e using matrix multiplication and solving the system of equations
   e <-  tempX %*% solve(t(tempX) %*% tempX) %*% t(tempX) %*% proxyVar
 
-  # Standardize e to have unit variance (instead of bsxfun)
+  # Standardize e to have unit variance
   e <- scale(e, center = TRUE, scale = apply(e, 2, sd)) # Now, e contains the unit variance shock series
 
   ##################

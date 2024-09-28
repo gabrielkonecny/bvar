@@ -8,8 +8,8 @@
 #' as well as if and what kind of identification should be used. See the Details
 #' section for further information on identification. Identification can be
 #' achieved via Cholesky decomposition, sign restrictions (Rubio-Ramirez,
-#' Waggoner and Zha, 2010), and zero and sign restrictions (Arias,
-#' Rubio-Ramirez and Waggoner, 2018).
+#' Waggoner and Zha, 2010), combination of zero and sign restrictions (Arias,
+#' Rubio-Ramirez and Waggoner, 2018) or using an external instrument.
 #'
 #' Identification can be performed via Cholesky decomposition, sign
 #' restrictions, or zero and sign restrictions. The algorithm

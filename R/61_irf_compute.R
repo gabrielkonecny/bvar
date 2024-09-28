@@ -56,7 +56,7 @@ compute_irf <- function(
     }
     if(is.null(sign_restr) & !is.null(instrument)){
           shock <- diag(M)
-          shock[,1] <- iv_stats(residuals,instrument)$impact
+          shock[,1] <- proxy_svar(residuals,instrument)$impact
     }
     if(!is.null(sign_restr) & !is.null(instrument)){
     stop("Sign restrictions and instrument cannot be used at the same time!")
@@ -76,7 +76,7 @@ compute_irf <- function(
 
 
   output$iv_f_stat <- if(!is.null(instrument)){
-    iv_stats(residuals,instrument)$f_stat} else{NULL}
+    proxy_svar(residuals,instrument)$f_stat} else{NULL}
 
   return(output)
 }
