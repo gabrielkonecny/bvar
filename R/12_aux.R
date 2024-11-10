@@ -267,3 +267,40 @@ quantile_check <- function(conf_bands) {
 
   return(quants)
 }
+
+#' Set dates
+#'
+#' Changes rownames to a character string containing dates. Common format of
+#' dates or other index is needed if the length of the \emph{instrument} and
+#' reduced form residuals differ. In such case, the identification is based on
+#' a common subset of residuals and the instrument.
+#'
+#' @param data Numeric vector, matrix or a data.frame. Note that observations
+#' are expected to be ordered from earliest to latest, and variables in the
+#' columns.
+#' @param start Starting date of the data in form "YYYY-MM-DD".
+#' @param frequency Frequency of the data: "year", "quarter", "month", "week" or "day".
+#'
+#' @return Returns data with rownames containing sequence of dates as character.
+set_dates <- function(data, start, frequency) {
+
+  # Check if the input is a data frame, matrix, or numeric vector
+  if (!is.data.frame(data) && !is.matrix(data) && !(is.vector(data) && is.numeric(data))) {
+    stop("Error: data must be either a data frame, a matrix, or a numeric vector.")
+  }
+
+  # Determine the number of elements to set row names for
+  num_elements <- if (is.data.frame(data)) {
+    nrow(data)
+  } else if (is.matrix(data)) {
+    nrow(data)
+  } else {
+    length(data)
+  }
+
+  # Set the row names or names based on the sequence of dates
+  rownames(data) <- seq(as.Date(start), by = frequency, length.out = num_elements)
+
+  return(data)
+}
+

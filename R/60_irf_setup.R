@@ -38,14 +38,10 @@
 #' @param sign_lim Integer scalar. Maximum number of tries to find suitable
 #' matrices to for fitting sign or zero and sign restrictions.
 #' @param instrument Numeric vector. If provided, the identification is performed using proxy
-#' VAR. Multiple instruments are not supported at the moment.
-#' If the length of the \emph{instrument} and length of the residuals
-#' differ, their intersection based on dates is used. The dates can be provided
-#' by specifying \emph{start_date} and \emph{frequency}.
-#' @param start_date Starting date of the instrument in form "YYYY-MM-DD".
-#' Required only for SVAR identified with an external instrument.
-#' @param frequency Frequency of the instrument: "year", "month" or "day".
-#' Required only for SVAR identified with an external instrument.
+#' VAR. If the length of the \emph{instrument} and length of the residuals
+#' differ, their intersection based on rownames is used. In this special case,
+#' user is expected to provide rownames for both \emph{data} and
+#' \emph{instrument}. See examples and helper function \emph{set_dates}.
 #'
 #'
 #' @return Returns a named list of class \code{bv_irf} with options for
@@ -81,6 +77,10 @@
 #' zero_signs <- matrix(c(1, 0, NA, -1, 1, 0, -1, 1, 1), nrow = 3)
 #' bv_irf(sign_restr = zero_signs)
 #'
+#' # Set up structural impulse responses using external instrument with length
+#' corresponding to reduced form residuals
+#' bv_irf(instrument = istrument)
+#'
 #' # Prepare to estimate unidentified impulse responses
 #' bv_irf(identification = FALSE)
 bv_irf <- function(
@@ -89,9 +89,8 @@ bv_irf <- function(
   identification = TRUE,
   sign_restr = NULL,
   sign_lim = 1000,
-  instrument = NULL,
-  start_date = NULL,
-  frequency = NULL)  {
+  instrument = NULL
+  )  {
 
   # Input checks
   horizon <- int_check(horizon, min = 1, max = 1e6,
@@ -139,15 +138,6 @@ bv_irf <- function(
       stop("Input must be a numeric vector. Multiple instruments are not supported at the moment.")
     }
   }
-
-  # Create a sequence of dates and assign to rownames from user input
-  if(!is.null(start_date) & !is.null(frequency)) {
-    names(instrument) <- seq(as.Date(start_date), by = frequency, length.out = length(instrument))
-  } else if(is.null(start_date) & !is.null(frequency)) {
-    stop("Error: 'start_date' must be specified when 'frequency' is provided.")
-  } else if(!is.null(start_date) & is.null(frequency)) {
-    stop("Error: 'frequency' must be specified when 'start_date' is provided.")
-  } else {}
 
 
 

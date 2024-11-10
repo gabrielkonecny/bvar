@@ -10,9 +10,7 @@ bv_irf(
   identification = TRUE,
   sign_restr = NULL,
   sign_lim = 1000,
-  instrument = NULL,
-  start_date = NULL,
-  frequency = NULL
+  instrument = NULL
 )
 }
 \arguments{
@@ -41,16 +39,10 @@ value is \code{NULL}. Note that in order to be fully identified at least
 matrices to for fitting sign or zero and sign restrictions.}
 
 \item{instrument}{Numeric vector. If provided, the identification is performed using proxy
-VAR. Multiple instruments are not supported at the moment.
-If the length of the \emph{instrument} and length of the residuals
-differ, their intersection based on dates is used. The dates can be provided
-by specifying \emph{start_date} and \emph{frequency}.}
-
-\item{start_date}{Starting date of the instrument in form "YYYY-MM-DD".
-Required only for SVAR identified with an external instrument.}
-
-\item{frequency}{Frequency of the instrument: "year", "month" or "day".
-Required only for SVAR identified with an external instrument.}
+VAR. If the length of the \emph{instrument} and length of the residuals
+differ, their intersection based on rownames is used. In this special case,
+user is expected to provide rownames for both \emph{data} and
+\emph{instrument}. See examples and helper function \emph{set_dates}.}
 }
 \value{
 Returns a named list of class \code{bv_irf} with options for
@@ -64,8 +56,8 @@ or not forecast error variance decompositions (FEVDs) should be included
 as well as if and what kind of identification should be used. See the Details
 section for further information on identification. Identification can be
 achieved via Cholesky decomposition, sign restrictions (Rubio-Ramirez,
-Waggoner and Zha, 2010), and zero and sign restrictions (Arias,
-Rubio-Ramirez and Waggoner, 2018).
+Waggoner and Zha, 2010), combination of zero and sign restrictions (Arias,
+Rubio-Ramirez and Waggoner, 2018) or using an external instrument.
 }
 \details{
 Identification can be performed via Cholesky decomposition, sign
