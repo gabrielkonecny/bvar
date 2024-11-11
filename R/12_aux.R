@@ -304,3 +304,29 @@ set_dates <- function(data, start, frequency) {
   return(data)
 }
 
+
+check_iv <- function(residuals, instrument) {
+
+  # Get the dates (names)
+  dates_residuals <- rownames(residuals)
+  dates_instrument <- names(instrument)
+
+  # Find the intersection of dates (common dates)
+  common_dates <- intersect(dates_residuals, dates_instrument)
+
+
+  # Shorten both objects to the common dates
+  residuals_shortened <- residuals[common_dates,]
+  instrument_shortened <- instrument[common_dates]
+
+
+  out <- structure(mget(c("residuals", "instrument",
+                          "dates_residuals", "dates_instrument",
+                          "residuals_shortened", "instrument_shortened",
+                          "common_dates")),
+                       class = "check_iv")
+
+  return(out)
+}
+
+
