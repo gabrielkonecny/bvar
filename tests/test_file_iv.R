@@ -18,8 +18,8 @@ instrument <- readRDS(file = "./data/instrument_MAR21.rds")
 # In case of correctly provided rownames:
 data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
 x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
-irf(x) <- irf.bvar(x, bv_irf(horizon = 24, identification = TRUE, instrument = instrument), n_thin = 1L)
-plot(irf(x)) # Here, only instrumented shock should be displayed,
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE, instrument = instrument), n_thin = 1L)
+#plot(irf(x)) # Here, only instrumented shock should be displayed,
 # other shocks are not sensibly identified (= garbage)
 plot(irf(x), vars_impulse = 1)
 
@@ -27,22 +27,25 @@ plot(irf(x), vars_impulse = 1)
 check_iv_results <- check_iv(data, instrument)
 check_iv_results
 
-# Example 2 - Rownames via interface ----
-rownames(data) <- NULL
-names(instrument) <- NULL
-x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T,
-          start_date = "1979-01-01", frequency = "month")
+# Example 1b- dates provided in rownames ----
 
-irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE,
-                             instrument = instrument,
-                             start_date = "1991-01-01",
-                             frequency = "month"), n_thin = 1L)
+data <- readRDS(data, file = "./data/data_with_ebp.rds")
+instrument <- readRDS(file = "./data/instrument_MAR21.rds")
 
-plot(irf(x), vars_impulse = "GS1")
+# In case of correctly provided rownames:
+data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
+irf <- bv_irf(horizon = 24, identification = TRUE, instrument = instrument)
+lags <- 12
+x <- bvar(data, lags = lags, n_draw = 1000L, n_burn = 500L, verbose = T,
+      irf=irf)
+plot(x$irf, vars_impulse = 1)
+# other shocks are not sensibly identified (= garbage)
+
 
 
 # Example 3 - No rownames ----
 # All IRF will be garbage or calculation will throw error.
+# To be fixed.. This should work in the future
 x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
 
 irf(x) <- irf.bvar(x,

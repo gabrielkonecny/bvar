@@ -39,7 +39,7 @@ print.check_iv <- function(x, ...) {
   )
 
   # Print the summary information
-  cat("Found data from", start_date_data, "until", end_date_data,
+  cat("Found residuals from", start_date_data, "until", end_date_data,
       "and instrument from", start_date_instrument, "until", end_date_instrument, "\n")
   cat("Matched", num_matches, "observations: from ", matched_display, "\n")
 

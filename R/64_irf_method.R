@@ -138,19 +138,20 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         # For identification, if IV is shorter than residuals, subset residuals.
         #From 62b_proxy_var.R
         residuals_draw <- Y - X %*% beta[j, , ]
-        intersection <- intersect_vectors_by_date(residuals_draw, instrument)
+        intersection <- check_iv(residuals_draw, instrument)
+        if(i==1){print(intersection)}
       } else{
         intersection <- list()
-        intersection$residuals <- NULL
-        intersection$instrument <- NULL
+        intersection$residuals_shortened <- NULL
+        intersection$instrument_shortened <- NULL
       }
       output  <- compute_irf(
         beta_comp = beta_comp, sigma = sigma[j, , ], M = M, lags = lags,
         horizon = irf[["horizon"]], identification = irf[["identification"]],
         sign_restr = irf[["sign_restr"]], zero = irf[["zero"]],
         sign_lim = irf[["sign_lim"]],
-        residuals = intersection$residuals,
-        instrument = intersection$instrument)
+        residuals = intersection$residuals_shortened,
+        instrument = intersection$instrument_shortened)
       irf_comp <- output$irf_comp
       irf_store[["irf"]][i, , , ] <- irf_comp
       irf_store[["iv_stats"]][["f_stat_store"]][i] <- output$iv_f_stat

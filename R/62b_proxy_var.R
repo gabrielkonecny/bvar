@@ -2,22 +2,22 @@
 # If IV and residuals have different length, intersect them to achieve identification
 # using a subset of observations from reduced form residuals.
 
-intersect_vectors_by_date <- function(residuals, instrument) {
-
-  # Get the dates (names)
-  dates_residuals <- rownames(residuals)
-  dates_instrument <- names(instrument)
-
-  # Find the intersection of dates (common dates)
-  common_dates <- intersect(dates_residuals, dates_instrument)
-
-  # Shorten both objects to the common dates
-  residuals_shortened <- residuals[common_dates,]
-  instrument_shortened <- instrument[common_dates]
-
-  # Return the shortened vectors
-  return(list(residuals = residuals_shortened, instrument = instrument_shortened))
-}
+# intersect_vectors_by_date <- function(residuals, instrument) {
+#
+#   # Get the dates (names)
+#   dates_residuals <- rownames(residuals)
+#   dates_instrument <- names(instrument)
+#
+#   # Find the intersection of dates (common dates)
+#   common_dates <- intersect(dates_residuals, dates_instrument)
+#
+#   # Shorten both objects to the common dates
+#   residuals_shortened <- residuals[common_dates,]
+#   instrument_shortened <- instrument[common_dates]
+#
+#   # Return the shortened vectors
+#   return(list(residuals = residuals_shortened, instrument = instrument_shortened))
+# }
 
 proxy_svar <- function(residuals, instrument){
   library(Matrix)

@@ -131,24 +131,22 @@ bvar <- function(
   mh = bv_mh(),
   fcast = NULL,
   irf = NULL,
-  verbose = TRUE,
-  start_date = NULL,
-  frequency = NULL, ...) {
+  verbose = TRUE, ...) {
 
   cl <- match.call()
   start_time <- Sys.time()
 
 
 
-  # Create a sequence of dates and assign to rownames from user input
-  if(!is.null(start_date) & !is.null(frequency)) {
-    # If both start_date and frequency are provided, proceed with renaming row names
-    rownames(data) <- seq(as.Date(start_date), by = frequency, length.out = nrow(data))
-  } else if(is.null(start_date) & !is.null(frequency)) {
-    stop("Error: 'start_date' must be specified when 'frequency' is provided.")
-  } else if(!is.null(start_date) & is.null(frequency)) {
-    stop("Error: 'frequency' must be specified when 'start_date' is provided.")
-  } else {}
+  # # Create a sequence of dates and assign to rownames from user input
+  # if(!is.null(start_date) & !is.null(frequency)) {
+  #   # If both start_date and frequency are provided, proceed with renaming row names
+  #   rownames(data) <- seq(as.Date(start_date), by = frequency, length.out = nrow(data))
+  # } else if(is.null(start_date) & !is.null(frequency)) {
+  #   stop("Error: 'start_date' must be specified when 'frequency' is provided.")
+  # } else if(!is.null(start_date) & is.null(frequency)) {
+  #   stop("Error: 'frequency' must be specified when 'start_date' is provided.")
+  # } else {}
 
 
   # Setup and checks -----
@@ -204,6 +202,10 @@ bvar <- function(
 
   variables <- name_deps(variables = colnames(data), M = M)
   explanatories <- name_expl(variables = variables, M = M, lags = lags)
+
+  # if(!is.null(irf$instrument)){instrument <- irf$instrument
+  # check_iv_result <- check_iv(Y, instrument)
+  # print(check_iv_result)}
 
 
   # Priors -----
