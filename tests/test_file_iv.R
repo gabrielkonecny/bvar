@@ -1,14 +1,15 @@
 #Load functions ----
-r_files <- list.files(path = "R", pattern = "\\.R$", full.names = TRUE)
-
-for (file in r_files) {
-  tryCatch({
-    source(file)
-    message("Successfully sourced: ", file)
-  }, error = function(e) {
-    message("Error in file: ", file)
-  })
-}
+# r_files <- list.files(path = "R", pattern = "\\.R$", full.names = TRUE)
+#
+# for (file in r_files) {
+#   tryCatch({
+#     source(file)
+#     message("Successfully sourced: ", file)
+#   }, error = function(e) {
+#     message("Error in file: ", file)
+#   })
+# }
+devtools::load_all()
 
 # Example 1 - dates provided in rownames ----
 
@@ -24,8 +25,8 @@ irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE, instrument = 
 plot(irf(x), vars_impulse = 1)
 
 #check_iv
-check_iv_results <- check_iv(data, instrument)
-check_iv_results
+#check_iv_results <- check_iv(data, instrument)
+#check_iv_results
 
 # Example 1b- dates provided in rownames ----
 

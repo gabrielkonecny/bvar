@@ -80,6 +80,10 @@ bv_irf(sign_restr = signs)
 zero_signs <- matrix(c(1, 0, NA, -1, 1, 0, -1, 1, 1), nrow = 3)
 bv_irf(sign_restr = zero_signs)
 
+# Set up structural impulse responses using external instrument with length
+corresponding to reduced form residuals
+bv_irf(instrument = istrument)
+
 # Prepare to estimate unidentified impulse responses
 bv_irf(identification = FALSE)
 }

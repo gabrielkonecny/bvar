@@ -20,14 +20,14 @@
 # }
 
 proxy_svar <- function(residuals, instrument){
-  library(Matrix)
+  #library(Matrix)
 
   t <- nrow(residuals)
   n <- ncol(residuals)
   m <- 1 #only m=1 instrument implemented at the moment
 
   # Create the Kronecker product
-  eye_n <- Matrix(diag(rep(1, n)), sparse = TRUE)
+  eye_n <- diag(rep(1, n)) #Matrix(diag(rep(1, n)), sparse = TRUE)
   tempX <- cbind(1, instrument)
   kron_matrix <- kronecker(eye_n, tempX)
 

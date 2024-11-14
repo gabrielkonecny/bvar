@@ -15,8 +15,6 @@ bvar(
   fcast = NULL,
   irf = NULL,
   verbose = TRUE,
-  start_date = NULL,
-  frequency = NULL,
   ...
 )
 }
@@ -55,13 +53,13 @@ May also be calculated ex-post using \code{\link{irf.bvar}}.}
 \item{verbose}{Logical scalar. Whether to print intermediate results and
 progress.}
 
+\item{...}{Not used.}
+
 \item{start_date}{Starting date of the data in form "YYYY-MM-DD". Required
 only for SVAR identified with an external instrument.}
 
 \item{frequency}{Frequency of the data: "year", "month" or "day". Required
 only for SVAR identified with an external instrument.}
-
-\item{...}{Not used.}
 }
 \value{
 Returns a list of class \code{bvar} with the following elements:
