@@ -13,28 +13,20 @@ devtools::load_all()
 
 # Example 1 - dates provided in rownames ----
 
-data <- readRDS(data, file = "./data/data_with_ebp.rds")
+data_raw <- readRDS(data, file = "./data/data_with_ebp.rds")
+data <- fred_transform(data_raw, codes = c(1, 4, 4, 1, 1))
 instrument <- readRDS(file = "./data/instrument_MAR21.rds")
 
-# In case of correctly provided rownames:
-data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
+
 x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
 irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, identification = TRUE, instrument = instrument), n_thin = 1L)
-#plot(irf(x)) # Here, only instrumented shock should be displayed,
+# Here, only instrumented shock should be displayed,
 # other shocks are not sensibly identified (= garbage)
 plot(irf(x), vars_impulse = 1)
 
-#check_iv
-#check_iv_results <- check_iv(data, instrument)
-#check_iv_results
-
 # Example 1b- dates provided in rownames ----
 
-data <- readRDS(data, file = "./data/data_with_ebp.rds")
-instrument <- readRDS(file = "./data/instrument_MAR21.rds")
-
-# In case of correctly provided rownames:
-data <- fred_transform(data, codes = c(1, 4, 4, 1, 1))
+rm(x)
 irf <- bv_irf(horizon = 24, identification = TRUE, instrument = instrument)
 lags <- 12
 x <- bvar(data, lags = lags, n_draw = 1000L, n_burn = 500L, verbose = T,
@@ -45,6 +37,12 @@ plot(x$irf, vars_impulse = 1)
 
 
 # Example 3 - No rownames ----
+rownames(data) <- NULL
+names(instrument) <- seq(1, length.out=(length(instrument)))
+names(instrument) <- NULL
+check_iv_results <- check_iv(data, instrument)
+check_iv_results
+
 # All IRF will be garbage or calculation will throw error.
 # To be fixed.. This should work in the future
 x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)

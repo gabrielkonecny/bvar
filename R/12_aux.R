@@ -314,6 +314,10 @@ check_iv <- function(residuals, instrument) {
   # Find the intersection of dates (common dates)
   common_dates <- intersect(dates_residuals, dates_instrument)
 
+  # If there are no matches and throw an error
+  if (length(common_dates) == 0) {
+    stop("Could not match instrument with the data; please provide common indices for both. See `bv_irf` for details.")
+    }
 
   # Shorten both objects to the common dates
   residuals_shortened <- residuals[common_dates,]
