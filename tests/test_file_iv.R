@@ -53,6 +53,22 @@ irf(x) <- irf.bvar(x,
 plot(irf(x))
 
 
+# Misc ----
+
+# Testing internal irf functions
+data_raw <- readRDS(data, file = "./data/data_with_ebp.rds")
+data <- fred_transform(data_raw, codes = c(1, 4, 4, 1, 1))
+instrument <- readRDS(file = "./data/instrument_MAR21.rds")
+
+
+x <- bvar(data, lags = 12, n_draw = 1000L, n_burn = 500L, verbose = T)
+dots <- list(bv_irf(horizon = 24L, identification = TRUE, instrument = instrument))
+verbose <- T
+n_thin = 1L
+
+
+
+
 
 
 #plot(summary(irf(x), vars_impulse="GS1"))

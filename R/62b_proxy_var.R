@@ -1,23 +1,22 @@
-#Instrument has to be the same length as the residuals
-# If IV and residuals have different length, intersect them to achieve identification
-# using a subset of observations from reduced form residuals.
-
-# intersect_vectors_by_date <- function(residuals, instrument) {
-#
-#   # Get the dates (names)
-#   dates_residuals <- rownames(residuals)
-#   dates_instrument <- names(instrument)
-#
-#   # Find the intersection of dates (common dates)
-#   common_dates <- intersect(dates_residuals, dates_instrument)
-#
-#   # Shorten both objects to the common dates
-#   residuals_shortened <- residuals[common_dates,]
-#   instrument_shortened <- instrument[common_dates]
-#
-#   # Return the shortened vectors
-#   return(list(residuals = residuals_shortened, instrument = instrument_shortened))
-# }
+#' Proxy SVAR
+#'
+#' Performs identification using external \emph{instrument}. At this stage the
+#' \emph{instrument} and \emph{residuals} need to have equal number of
+#' observations. Transformations such as intersecting the instrument and
+#' residuals need to be done before calling this function.
+#'
+#' @param residuals Numeric matrix. During estimation, draw specific residuals
+#' are used.
+#' @param instrument Numeric vector containing the instrument. Possibly
+#' shortened beforehand to match the length of residuals.
+#'
+#' @return Returns a list with the following elements:
+#' \itemize{
+#'   \item \code{impact} - Contemporaneous transmission coefficients: Bzero
+#'   \item \code{Gamma}  - Estimated correlation between shock and instrument
+#'   \item \code{f_stat} - First stage F statistic
+#'   \item \code{lambda} - Reliability of instrument
+#' }
 
 proxy_svar <- function(residuals, instrument){
   #library(Matrix)

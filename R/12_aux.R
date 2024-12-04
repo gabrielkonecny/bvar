@@ -305,9 +305,22 @@ set_dates <- function(data, start, frequency) {
 }
 
 
+#' Check IV
+#'
+#' Intersects the \emph{residuals} and the \emph{instrument} based on an index
+#' (e.g. dates) provided in rownames and names, respectively. Returns an error
+#'  if the intersection is empty.
+#'
+#' @param residuals Numeric matrix. During estimation, draw specific residuals
+#' are used and rownames are inherited from data.
+#' @param instrument Numeric vector.
+#'
+#' @return Returns a list of class \code{check_iv} with information on
+#' values and indices corresponding to the intersection. Additionally the list
+#' contains inputs provided to the function.
 check_iv <- function(residuals, instrument) {
 
-  # Get the dates (names)
+  # Get the dates or other indices
   dates_residuals <- rownames(residuals)
   dates_instrument <- names(instrument)
 

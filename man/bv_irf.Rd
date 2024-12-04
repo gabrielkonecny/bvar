@@ -39,7 +39,7 @@ value is \code{NULL}. Note that in order to be fully identified at least
 matrices to for fitting sign or zero and sign restrictions.}
 
 \item{instrument}{Numeric vector. If provided, the identification is performed using proxy
-VAR. If the length of the \emph{instrument} and length of the residuals
+SVAR. If the length of the \emph{instrument} and length of the residuals
 differ, their intersection based on rownames is used. In this special case,
 user is expected to provide rownames for both \emph{data} and
 \emph{instrument}. See examples and helper function \emph{set_dates}.}
@@ -57,15 +57,18 @@ as well as if and what kind of identification should be used. See the Details
 section for further information on identification. Identification can be
 achieved via Cholesky decomposition, sign restrictions (Rubio-Ramirez,
 Waggoner and Zha, 2010), combination of zero and sign restrictions (Arias,
-Rubio-Ramirez and Waggoner, 2018) or using an external instrument.
+Rubio-Ramirez and Waggoner, 2018) or using an external instrument
+(Stock and Watson 2012, Mertens and Ravn 2013)
 }
 \details{
 Identification can be performed via Cholesky decomposition, sign
-restrictions, or zero and sign restrictions. The algorithm
-for generating suitable sign restrictions follows Rubio-Ramirez, Waggoner
-and Zha (2010), while the one for zero and sign restrictions follows
-Arias, Rubio-Ramirez and Waggoner (2018).
+restrictions, zero and sign restrictions or using external instrument.
+The algorithm for generating suitable sign restrictions follows
+Rubio-Ramirez, Waggoner and Zha (2010), while the one for zero and sign
+restrictions follows Arias, Rubio-Ramirez and Waggoner (2018).
 Note the possiblity of finding no suitable zero/sign restrictions.
+The proxy SVAR identification follows the implementation in
+Miranda-Agrippino and Ricco (2021).
 }
 \examples{
 # Set impulse responses to a horizon of 20 time periods and enable FEVD
@@ -97,6 +100,16 @@ Rubio-Ramirez, J. F. and Waggoner, D. F. and Zha, T. (2010) Structural
   Sign and Zero Restrictions: Theory and Applications.
   \emph{Econometrica}, \bold{86}, 2, 685-720,
   \doi{10.3982/ECTA14468}.
+  Miranda-Agrippino, S., & Ricco, G. (2021). The transmission of monetary
+  policy shocks. \emph{American Economic Journal: Macroeconomics},
+   \bold{13(3)}, 74-107, \doi{10.1257/mac.20180124}
+   Stock, J. H., and Watson, M. W. (2012). Disentangling the Channels of the
+   2007-2009 Recession (No. w18094) \emph{National Bureau of Economic
+   Research}, \doi{10.3386/w18094}.
+   Mertens, K., and Ravn, M. O. (2013). The dynamic effects of personal and
+   corporate income tax changes in the United States. \emph{American
+   economic review}, \bold{103(4)}, 1212-1247,
+   \doi{10.1257/aer. 103.4.1212}.
 }
 \seealso{
 \code{\link{irf.bvar}}; \code{\link{plot.bvar_irf}}
