@@ -311,14 +311,21 @@ set_dates <- function(data, start, frequency) {
 #' (e.g. dates) provided in rownames and names, respectively. Returns an error
 #'  if the intersection is empty.
 #'
-#' @param residuals Numeric matrix. During estimation, draw specific residuals
+#' @param residuals Data frame or numeric matrix. During estimation, draw specific residuals
 #' are used and rownames are inherited from data.
 #' @param instrument Numeric vector.
 #'
 #' @return Returns a list of class \code{check_iv} with information on
 #' values and indices corresponding to the intersection. Additionally the list
 #' contains inputs provided to the function.
+#' @noRd
 check_iv <- function(residuals, instrument) {
+
+  residuals <- data.frame(residuals)
+
+  # if(nrow(residuals) == length(instrument)){
+  #
+  # }
 
   # Get the dates or other indices
   dates_residuals <- rownames(residuals)

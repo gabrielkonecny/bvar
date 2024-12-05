@@ -17,9 +17,11 @@
 #'   \item \code{f_stat} - First stage F statistic
 #'   \item \code{lambda} - Reliability of instrument
 #' }
+#' @noRd
 
 proxy_svar <- function(residuals, instrument){
-  #library(Matrix)
+
+  residuals <- as.matrix(residuals)
 
   t <- nrow(residuals)
   n <- ncol(residuals)

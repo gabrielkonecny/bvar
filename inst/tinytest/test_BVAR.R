@@ -2,6 +2,7 @@
 # API tests -------
 
 data <- data2 <- data3 <- matrix(rnorm(1000), nrow = 200)
+instrument <- readRDS(file = "./data/instrument_MAR21.rds")
 
 # Fail and prepare -----
 
@@ -119,12 +120,15 @@ expect_silent(opt_irf3 <- bv_irf(fevd = FALSE, # Zero sign restricted
   sign_restr = matrix(c(NA, 0, NA, NA, 1, -1, NA, 1, NA), nrow = 3)))
 expect_silent(bv_irf(sign_restr = c(1, NA, -1, 1), sign_lim = 1000))
 expect_silent(bv_irf(sign_restr = c(0, NA, NA, 1), sign_lim = 1000))
+expect_silent(opt_irf4 <- bv_irf(instrument = instrument))
+expect_silent(print(opt_irf4))
 
-# Underidentified, too many 0, non-square restrictions
+
+# Underidentified, too many 0, non-square restrictions, wrong input type
 expect_message(bv_irf(sign_restr = matrix(c(NA, NA, NA, NA), nrow = 2)))
 expect_error(bv_irf(sign_restr = matrix(c(0, 0, -1, NA), nrow = 2)))
 expect_error(bf_irf(sign_restr = matrix(rnorm(6), nrow = 3)))
-
+expect_error(bv_irf(instrument = data.frame(instrument)))
 
 # Run and analyse -----
 
@@ -161,6 +165,7 @@ expect_silent(irf(run) <- irf(run, opt_irf1))
 expect_silent(irfs1 <- irf(run, verbose = TRUE))
 expect_silent(irfs2 <- irf(run2, opt_irf2))
 expect_silent(irfs3 <- irf(run2, opt_irf3))
+expect_silent(irfs4 <- irf(run2, opt_irf4))
 
 expect_silent(print(irfs1))
 expect_silent(print(summary(irfs1)))
