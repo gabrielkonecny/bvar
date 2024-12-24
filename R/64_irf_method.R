@@ -84,6 +84,7 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
       dots[[1]]
     } else {bv_irf(...)}
     instrument <- irf[["instrument"]]
+    manual_matching <- irf[["manual_matching"]]
 
     n_pres <- x[["meta"]][["n_save"]]
     n_thin <- int_check(n_thin, min = 1, max = (n_pres / 10),
@@ -138,7 +139,8 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         # For identification, if IV is shorter than residuals, subset residuals.
         #From 62b_proxy_var.R
         residuals_draw <- Y - X %*% beta[j, , ]
-        intersection <- check_iv(residuals_draw, instrument)
+        intersection <- check_iv(residuals_draw, instrument,
+                                 manual_matching = manual_matching)
         if(i==1){print(intersection)}
       } else{
         intersection <- list()
@@ -151,7 +153,8 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         sign_restr = irf[["sign_restr"]], zero = irf[["zero"]],
         sign_lim = irf[["sign_lim"]],
         residuals = intersection$residuals_shortened,
-        instrument = intersection$instrument_shortened)
+        instrument = intersection$instrument_shortened,
+        manual_matching = manual_matching)
       irf_comp <- output$irf_comp
       irf_store[["irf"]][i, , , ] <- irf_comp
       irf_store[["iv_stats"]][["f_stat_store"]][i] <- output$iv_f_stat

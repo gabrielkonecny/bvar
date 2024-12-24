@@ -40,7 +40,7 @@ compute_irf <- function(
   horizon,
   identification,
   sign_restr, zero = FALSE, sign_lim = 10000,
-  residuals = NULL, instrument = NULL) {
+  residuals = NULL, instrument = NULL, manual_matching = FALSE) {
 
 
 

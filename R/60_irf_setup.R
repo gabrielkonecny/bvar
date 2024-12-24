@@ -41,11 +41,13 @@
 #' @param sign_lim Integer scalar. Maximum number of tries to find suitable
 #' matrices to for fitting sign or zero and sign restrictions.
 #' @param instrument Numeric vector. If provided, the identification is performed using proxy
-#' SVAR. If the length of the \emph{instrument} and length of the residuals
-#' differ, their intersection based on rownames is used. In this special case,
-#' user is expected to provide rownames for both \emph{data} and
-#' \emph{instrument}. See examples and helper function \emph{set_dates}.
-#'
+#' SVAR. Since the residuals and instrument need not to have equal length in general,
+#' user is expected to provide a common index (rownames) for the data and the
+#' instrument. See examples and helper function \emph{set_dates}. This can be
+#' avoided by setting \emph{manual_matching} to TRUE.
+#' @param manual_matching If set to TRUE, user is not expected to specify common
+#' index for the data and instrument. Instead the length of instrument needs to
+#' match the length of residuals (= length(data inputted in bvar) - lags).
 #'
 #' @return Returns a named list of class \code{bv_irf} with options for
 #' \code{\link{bvar}}, \code{\link{irf.bvar}} or \code{\link{fevd.bvar}}.
@@ -102,7 +104,8 @@ bv_irf <- function(
   identification = TRUE,
   sign_restr = NULL,
   sign_lim = 1000,
-  instrument = NULL
+  instrument = NULL,
+  manual_matching = FALSE
   )  {
 
   # Input checks
@@ -159,7 +162,8 @@ bv_irf <- function(
     "identification" = identification,
     "sign_restr" = sign_restr, "zero" = zero,
     "sign_lim" = sign_lim,
-    "instrument" = instrument
+    "instrument" = instrument,
+    "manual_matching" = manual_matching
   )
 
   class(out) <- "bv_irf"

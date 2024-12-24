@@ -319,13 +319,17 @@ set_dates <- function(data, start, frequency) {
 #' values and indices corresponding to the intersection. Additionally the list
 #' contains inputs provided to the function.
 #' @noRd
-check_iv <- function(residuals, instrument) {
+check_iv <- function(residuals, instrument, manual_matching = FALSE) {
 
-  residuals <- data.frame(residuals)
+residuals <- data.frame(residuals)
 
-  # if(nrow(residuals) == length(instrument)){
-  #
-  # }
+if(manual_matching == TRUE){
+  dates_residuals <- NULL
+  dates_instrument <- NULL
+  common_dates <- NULL
+  residuals_shortened <- residuals
+  instrument_shortened <- instrument
+} else{
 
   # Get the dates or other indices
   dates_residuals <- rownames(residuals)
@@ -342,15 +346,14 @@ check_iv <- function(residuals, instrument) {
   # Shorten both objects to the common dates
   residuals_shortened <- residuals[common_dates,]
   instrument_shortened <- instrument[common_dates]
-
+}
 
   out <- structure(mget(c("residuals", "instrument",
                           "dates_residuals", "dates_instrument",
                           "residuals_shortened", "instrument_shortened",
-                          "common_dates")),
+                          "common_dates", "manual_matching")),
                        class = "check_iv")
 
   return(out)
 }
-
 
