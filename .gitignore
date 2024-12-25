@@ -317,3 +317,4 @@ TSWLatexianTemp*
 
 # End of https://www.gitignore.io/api/latex
 tests/test_file_iv.R
+tests/iv_testfile.R
