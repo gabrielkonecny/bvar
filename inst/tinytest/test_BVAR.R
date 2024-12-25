@@ -1,8 +1,12 @@
-
+devtools::load_all()
 # API tests -------
 
 data <- data2 <- data3 <- matrix(rnorm(1000), nrow = 200)
-instrument <- readRDS(file = "./data/instrument_MAR21.rds")
+
+instrument <-  rnorm(200)
+instrument_named <- instrument
+names(instrument_named) <- seq(1:200)
+instrument_exact <- instrument[3:200]
 
 # Fail and prepare -----
 
@@ -120,8 +124,14 @@ expect_silent(opt_irf3 <- bv_irf(fevd = FALSE, # Zero sign restricted
   sign_restr = matrix(c(NA, 0, NA, NA, 1, -1, NA, 1, NA), nrow = 3)))
 expect_silent(bv_irf(sign_restr = c(1, NA, -1, 1), sign_lim = 1000))
 expect_silent(bv_irf(sign_restr = c(0, NA, NA, 1), sign_lim = 1000))
-expect_silent(opt_irf4 <- bv_irf(instrument = instrument))
-expect_silent(print(opt_irf4))
+
+expect_silent(opt_irf4_iv <- bv_irf(instrument = instrument))
+expect_silent(print(opt_irf4_iv))
+expect_silent(opt_irf4_iv_named <- bv_irf(instrument = instrument_named))
+expect_silent(print(opt_irf4_iv_named))
+expect_silent(opt_irf4_iv_exact <- bv_irf(instrument = instrument_exact,
+                                 manual_matching = TRUE))
+expect_silent(print(opt_irf4_iv_exact))
 
 
 # Underidentified, too many 0, non-square restrictions, wrong input type
@@ -165,7 +175,8 @@ expect_silent(irf(run) <- irf(run, opt_irf1))
 expect_silent(irfs1 <- irf(run, verbose = TRUE))
 expect_silent(irfs2 <- irf(run2, opt_irf2))
 expect_silent(irfs3 <- irf(run2, opt_irf3))
-expect_silent(irfs4 <- irf(run2, opt_irf4))
+expect_silent(irfs4_iv_exact <- irf(run2, opt_irf4_iv_exact))
+expect_silent(irfs4_iv_named <- irf(run2, opt_irf4_iv_named))
 
 expect_silent(print(irfs1))
 expect_silent(print(summary(irfs1)))
@@ -174,6 +185,8 @@ expect_silent(print(fevd(run2))) # Recalculates
 expect_silent(print(fevd(irfs2))) # Recalculates
 expect_silent(plot(irfs1, vars_res = 1, vars_imp = 1))
 
+# No names / wrong names provided and exact_matching = F
+expect_error(irf(run2, opt_irf4_iv))
 
 # 80_coda ---
 
