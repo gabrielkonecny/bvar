@@ -30,11 +30,14 @@ print.check_iv <- function(out, ...) {
   end_date_instrument <- tail(out$dates_instrument, 1)
 
   if(out$manual_matching == TRUE){
-    print(class(out$residuals_shortened))
-    cat("Performing exact matching... Note that this disregards any information
-        on the indexing provided in rownames.", "\n")
-    cat("Head of cbind(residuals, instrument):", "\n")
-    print(head(cbind(out$residuals_shortened, out$instrument_shortened)))
+    #print(class(out$residuals_shortened))
+    cat("Found residuals of length", nrow(out$residuals_shortened),  "\n")
+    cat("Found instrument of length", length(out$instrument_shortened),  "\n")
+    # cat("Head of cbind(residuals[,1], instrument):", "\n")
+    # m1 <- cbind(out$residuals_shortened[,1], out$instrument_shortened)
+    # display_matrix(m1)
+    #print(head(cbind(out$residuals_shortened[,1], out$instrument_shortened), 3))
+    #print(tail(cbind(out$residuals_shortened[,1], out$instrument_shortened), 3))
     # cat("Found residuals:", head(irf$residuals_shortened,1), "...", tail(out$residuals_shortened,1),
     #     "and instrument:",  head(out$instrument_shortened,1), "...",  tail(out$instrument_shortened,1))
   } else{

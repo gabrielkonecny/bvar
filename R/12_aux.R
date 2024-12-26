@@ -314,12 +314,18 @@ set_dates <- function(data, start, frequency) {
 #' @param residuals Data frame or numeric matrix. During estimation, draw specific residuals
 #' are used and rownames are inherited from data.
 #' @param instrument Numeric vector.
-#'
+#' @param proxyvar character string. Variable for which instrument is provided -
+#' Needs to correspond to one of the column names of the data used in
+#' \emph{bvar}.
+#' @param manual_matching If set to TRUE, user is not expected to specify common
+#' index for the data and instrument. Instead the length of instrument needs to
+#' match the length of residuals (= length(data inputted in bvar) - lags).
 #' @return Returns a list of class \code{check_iv} with information on
 #' values and indices corresponding to the intersection. Additionally the list
 #' contains inputs provided to the function.
 #' @noRd
-check_iv <- function(residuals, instrument, manual_matching = FALSE) {
+check_iv <- function(residuals, instrument, manual_matching = FALSE,
+                     proxyvar) {
 
 residuals <- data.frame(residuals)
 
@@ -327,10 +333,20 @@ if(manual_matching == TRUE){
   dates_residuals <- NULL
   dates_instrument <- NULL
   common_dates <- NULL
+
+  if(!nrow(residuals) == length(instrument)){
+  stop("manual_matching is TRUE but the length of residuals does not match the length of instrument!
+  Residuals are shorter than the data inputted to bvar, since first l observations are removed,
+  where l corresponds to number of lags used.")
+  }
+
   residuals_shortened <- residuals
   instrument_shortened <- instrument
 } else{
 
+  if (!proxyvar %in% colnames(residuals)) {
+    stop(paste("The proxied variable", proxyvar, "was not found in the column names of residuals."))
+  }
   # Get the dates or other indices
   dates_residuals <- rownames(residuals)
   dates_instrument <- names(instrument)
@@ -356,4 +372,22 @@ if(manual_matching == TRUE){
 
   return(out)
 }
+
+# display_matrix <- function(mat) {
+#   n <- nrow(mat)
+#
+#   if (n > 6) {
+#     # Display the first 3 rows
+#     print(head(mat, 3))
+#
+#     # Print dots to indicate omitted rows
+#     cat("...\n...\n...\n")
+#
+#     # Display the last 3 rows
+#     print(tail(mat, 3))
+#   } else {
+#     # If the matrix has 6 or fewer rows, display the entire matrix
+#     print(mat)
+#   }
+# }
 

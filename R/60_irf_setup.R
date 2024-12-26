@@ -45,6 +45,9 @@
 #' user is expected to provide a common index (rownames) for the data and the
 #' instrument. See examples and helper function \emph{set_dates}. This can be
 #' avoided by setting \emph{manual_matching} to TRUE.
+#' @param proxyvar character string. Variable for which instrument is provided -
+#' Needs to correspond to one of the column names of the data used in
+#' \emph{bvar}.
 #' @param manual_matching If set to TRUE, user is not expected to specify common
 #' index for the data and instrument. Instead the length of instrument needs to
 #' match the length of residuals (= length(data inputted in bvar) - lags).
@@ -105,6 +108,7 @@ bv_irf <- function(
   sign_restr = NULL,
   sign_lim = 1000,
   instrument = NULL,
+  proxyvar = NULL,
   manual_matching = FALSE
   )  {
 
@@ -151,7 +155,8 @@ bv_irf <- function(
   if(!is.null(instrument)){
     if (is.numeric(instrument)) {
     } else {
-      stop("Input must be a numeric vector. Multiple instruments are not supported at the moment.")
+      stop("Input must be a numeric vector. Multiple instruments are not
+           supported.")
     }
   }
 
@@ -163,13 +168,22 @@ bv_irf <- function(
   Alternatively, switch manual_matching to TRUE.")
   }
 
+  if (!is.null(instrument) && is.null(proxyvar)) {
+    stop("If 'instrument' is specified, 'proxyvar' must also be specified.")
+  }
+
+  if(!is.null(proxyvar) && !is.character(proxyvar)){
+    stop("Proxyvar needs to be an object of type character.")
+  }
+
   # Outputs
   out <- list("horizon" = horizon, "fevd" = fevd,
     "identification" = identification,
     "sign_restr" = sign_restr, "zero" = zero,
     "sign_lim" = sign_lim,
     "instrument" = instrument,
-    "manual_matching" = manual_matching
+    "manual_matching" = manual_matching,
+    "proxyvar" = proxyvar
   )
 
   class(out) <- "bv_irf"
