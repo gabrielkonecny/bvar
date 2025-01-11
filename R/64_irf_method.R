@@ -156,7 +156,8 @@ irf.bvar <- function(x, ..., conf_bands, n_thin = 1L, verbose = FALSE) {
         sign_lim = irf[["sign_lim"]],
         residuals = intersection$residuals_shortened,
         instrument = intersection$instrument_shortened,
-        manual_matching = manual_matching)
+        manual_matching = manual_matching,
+        proxyvar = proxyvar)
       irf_comp <- output$irf_comp
       irf_store[["irf"]][i, , , ] <- irf_comp
       irf_store[["iv_stats"]][["f_stat_store"]][i] <- output$iv_f_stat

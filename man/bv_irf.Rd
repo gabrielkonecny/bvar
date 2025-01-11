@@ -11,6 +11,7 @@ bv_irf(
   sign_restr = NULL,
   sign_lim = 1000,
   instrument = NULL,
+  proxyvar = NULL,
   manual_matching = FALSE
 )
 }
@@ -44,6 +45,10 @@ SVAR. Since the residuals and instrument need not to have equal length in genera
 user is expected to provide a common index (rownames) for the data and the
 instrument. See examples and helper function \emph{set_dates}. This can be
 avoided by setting \emph{manual_matching} to TRUE.}
+
+\item{proxyvar}{character string. Variable for which instrument is provided.
+Needs to correspond to one of the column names of the data used in
+\emph{bvar}.}
 
 \item{manual_matching}{If set to TRUE, user is not expected to specify common
 index for the data and instrument. Instead the length of instrument needs to
@@ -94,6 +99,18 @@ bv_irf(instrument = istrument)
 
 # Prepare to estimate unidentified impulse responses
 bv_irf(identification = FALSE)
+
+# Prepare to estimate SVAR-IV using an indexed instrument for monetary policy shocks
+mpi_named <- readRDS(file = "./data/instrument_MAR21.rds")
+bv_irf(instrument = mpi_named, manual_matching = FALSE,
+       proxyvar = "GS1")
+
+# Prepare to estimate SVAR-IV using an instrument for monetary policy shocks
+# (where its length is equal to the length of the residuals)
+mpi_exact <- readRDS(file = "./data/instrument_MAR21.rds")
+bv_irf(instrument = mpi_exact, manual_matching = TRUE,
+       proxyvar = "GS1")
+
 }
 \references{
 Rubio-Ramirez, J. F. and Waggoner, D. F. and Zha, T. (2010) Structural

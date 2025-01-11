@@ -45,7 +45,7 @@
 #' user is expected to provide a common index (rownames) for the data and the
 #' instrument. See examples and helper function \emph{set_dates}. This can be
 #' avoided by setting \emph{manual_matching} to TRUE.
-#' @param proxyvar character string. Variable for which instrument is provided -
+#' @param proxyvar character string. Variable for which instrument is provided.
 #' Needs to correspond to one of the column names of the data used in
 #' \emph{bvar}.
 #' @param manual_matching If set to TRUE, user is not expected to specify common
@@ -101,6 +101,18 @@
 #'
 #' # Prepare to estimate unidentified impulse responses
 #' bv_irf(identification = FALSE)
+#'
+#' # Prepare to estimate SVAR-IV using an indexed instrument for monetary policy shocks
+#' mpi_named <- readRDS(file = "./data/instrument_MAR21.rds")
+#' bv_irf(instrument = mpi_named, manual_matching = FALSE,
+#'        proxyvar = "GS1")
+#'
+#' # Prepare to estimate SVAR-IV using an instrument for monetary policy shocks
+#' # (where its length is equal to the length of the residuals)
+#' mpi_exact <- readRDS(file = "./data/instrument_MAR21.rds")
+#' bv_irf(instrument = mpi_exact, manual_matching = TRUE,
+#'        proxyvar = "GS1")
+#'
 bv_irf <- function(
   horizon = 12,
   fevd = FALSE,

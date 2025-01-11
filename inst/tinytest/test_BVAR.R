@@ -1,7 +1,10 @@
 devtools::load_all()
 # API tests -------
 
-data <- data2 <- data3 <- matrix(rnorm(1000), nrow = 200)
+data <- data2 <- data3 <- data_iv <- matrix(rnorm(1000), nrow = 200)
+
+colnames(data_iv) <- paste0("col", 1:ncol(data_iv))
+proxyvar <- colnames(data_iv)[2]
 
 instrument <-  rnorm(200)
 instrument_named <- instrument
@@ -125,12 +128,16 @@ expect_silent(opt_irf3 <- bv_irf(fevd = FALSE, # Zero sign restricted
 expect_silent(bv_irf(sign_restr = c(1, NA, -1, 1), sign_lim = 1000))
 expect_silent(bv_irf(sign_restr = c(0, NA, NA, 1), sign_lim = 1000))
 
-expect_silent(opt_irf4_iv <- bv_irf(instrument = instrument))
-expect_silent(print(opt_irf4_iv))
-expect_silent(opt_irf4_iv_named <- bv_irf(instrument = instrument_named))
-expect_silent(print(opt_irf4_iv_named))
+expect_silent(opt_irf4_iv <- bv_irf(instrument = instrument,
+                                    manual_matching = TRUE,
+                                    proxyvar = proxyvar))
+expect_silent(opt_irf4_iv_named <- bv_irf(instrument = instrument_named,
+                                          proxyvar = proxyvar))
 expect_silent(opt_irf4_iv_exact <- bv_irf(instrument = instrument_exact,
-                                 manual_matching = TRUE))
+                                 manual_matching = TRUE,
+                                 proxyvar = proxyvar))
+expect_silent(print(opt_irf4_iv))
+expect_silent(print(opt_irf4_iv_named))
 expect_silent(print(opt_irf4_iv_exact))
 
 
@@ -138,7 +145,12 @@ expect_silent(print(opt_irf4_iv_exact))
 expect_message(bv_irf(sign_restr = matrix(c(NA, NA, NA, NA), nrow = 2)))
 expect_error(bv_irf(sign_restr = matrix(c(0, 0, -1, NA), nrow = 2)))
 expect_error(bf_irf(sign_restr = matrix(rnorm(6), nrow = 3)))
+
+# wrong input type, missing index or missing mandatory inputs
 expect_error(bv_irf(instrument = data.frame(instrument)))
+expect_error(bv_irf(instrument = instrument))
+expect_error(bv_irf(instrument = instrument_named))
+
 
 # Run and analyse -----
 
@@ -153,6 +165,9 @@ expect_silent(run2 <- bvar(data[, 1:3], lags = 2,
 expect_silent(run3 <- bvar(data, lags = 2,
   priors = bv_priors(hyper = c("lambda", "psi")), mh = mh,
   n_draw = 1000L, n_burn = 500L))
+expect_silent(run4 <- bvar(data_iv, lags = 2,
+                      priors = bv_priors(hyper = c("lambda", "psi")), mh = mh,
+                      n_draw = 1000L, n_burn = 500L))
 
 
 # 5*_fcast ---
@@ -175,8 +190,8 @@ expect_silent(irf(run) <- irf(run, opt_irf1))
 expect_silent(irfs1 <- irf(run, verbose = TRUE))
 expect_silent(irfs2 <- irf(run2, opt_irf2))
 expect_silent(irfs3 <- irf(run2, opt_irf3))
-expect_silent(irfs4_iv_exact <- irf(run2, opt_irf4_iv_exact))
-expect_silent(irfs4_iv_named <- irf(run2, opt_irf4_iv_named))
+expect_silent(irfs4_iv_exact <- irf(run4, opt_irf4_iv_exact))
+expect_silent(irfs4_iv_named <- irf(run4, opt_irf4_iv_named))
 
 expect_silent(print(irfs1))
 expect_silent(print(summary(irfs1)))
@@ -186,7 +201,12 @@ expect_silent(print(fevd(irfs2))) # Recalculates
 expect_silent(plot(irfs1, vars_res = 1, vars_imp = 1))
 
 # No names / wrong names provided and exact_matching = F
-expect_error(irf(run2, opt_irf4_iv))
+expect_error(irf(run4, bv_irf(instrument = instrument,
+                              manual_matching = F,
+                              proxyvar = proxyvar)))
+# manual_matching with wrong length
+expect_error(irf(run4, opt_irf4_iv))
+
 
 # 80_coda ---
 

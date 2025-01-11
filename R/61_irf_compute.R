@@ -40,7 +40,7 @@ compute_irf <- function(
   horizon,
   identification,
   sign_restr, zero = FALSE, sign_lim = 10000,
-  residuals = NULL, instrument = NULL, manual_matching = FALSE) {
+  residuals = NULL, instrument = NULL, manual_matching = FALSE, proxyvar = NULL) {
 
 
 
@@ -56,8 +56,30 @@ compute_irf <- function(
     }
     if(is.null(sign_restr) & !is.null(instrument)){
           shock <- diag(M)
+
+          # Find the column index of the proxy variable
+          col_index <- which(colnames(residuals) == proxyvar)
+
+          # If the proxy variable is not already the first column, reorder columns
+          if (col_index != 1) {
+            # Instrumented variable swaps place with first variable in system
+            proxy_svar_ordering <- get_swapped_index(residuals, proxyvar)
+
+            # For proxy svar the instrumented variable is now ordered first
+            proxy_svar_output <- proxy_svar(
+              residuals[, proxy_svar_ordering],instrument)
+
+            # Reverse the ordering for output
+            proxy_svar_output$impact <- proxy_svar_output$impact[proxy_svar_ordering, , drop = FALSE]
+            shock[,col_index] <- proxy_svar_output$impact
+
+            } else{
+
+
+          # Assumed instrumented variable is ordered first
           proxy_svar_output <- proxy_svar(residuals,instrument)
           shock[,1] <- proxy_svar_output$impact
+            }
     }
     if(!is.null(sign_restr) & !is.null(instrument)){
     stop("Sign restrictions and instrument cannot be used at the same time!")

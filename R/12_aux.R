@@ -336,7 +336,7 @@ if(manual_matching == TRUE){
 
   if(!nrow(residuals) == length(instrument)){
   stop("manual_matching is TRUE but the length of residuals does not match the length of instrument!
-  Residuals are shorter than the data inputted to bvar, since first l observations are removed,
+  Note that residuals are shorter than the data inputted to bvar, since first l observations of data are not part of residuals,
   where l corresponds to number of lags used.")
   }
 
@@ -390,4 +390,19 @@ if(manual_matching == TRUE){
 #     print(mat)
 #   }
 # }
+
+get_swapped_index <- function(residuals, proxyvar) {
+  # Find the column index of the proxy variable
+  j <- which(colnames(residuals) == proxyvar)
+
+  # Create a sequence of column indices
+  index <- seq_len(ncol(residuals))
+
+  # Swap the first column index with the proxyvar column index
+  index[1] <- index[j]
+  index[j] <- 1
+
+  return(index)
+}
+
 

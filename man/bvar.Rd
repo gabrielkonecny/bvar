@@ -54,12 +54,6 @@ May also be calculated ex-post using \code{\link{irf.bvar}}.}
 progress.}
 
 \item{...}{Not used.}
-
-\item{start_date}{Starting date of the data in form "YYYY-MM-DD". Required
-only for SVAR identified with an external instrument.}
-
-\item{frequency}{Frequency of the data: "year", "month" or "day". Required
-only for SVAR identified with an external instrument.}
 }
 \value{
 Returns a list of class \code{bvar} with the following elements:
