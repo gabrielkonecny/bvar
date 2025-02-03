@@ -73,13 +73,13 @@ confidence bands.
 }
 \examples{
 \donttest{
-# Access a subset of the fred_qd dataset
-data <- fred_qd[, c("CPIAUCSL", "UNRATE", "FEDFUNDS")]
-# Transform it to be stationary
-data <- fred_transform(data, codes = c(5, 5, 1), lag = 4)
+# Access the fred_md dataset
+data <- fred_md[,c("CPIAUCSL", "UNRATE", "FEDFUNDS")]
+# Transform and subset
+data <- fred_transform(data, codes = c(4, 1, 1))[1:732,]
 
-# Estimate a BVAR using one lag, default settings and very few draws
-x <- bvar(data, lags = 1, n_draw = 600L, n_burn = 100L, verbose = FALSE)
+# Estimate a BVAR using 12 lags, default settings and very few draws
+x <- bvar(data, lags = 12, n_draw = 600L, n_burn = 100L, verbose = FALSE)
 
 # Compute + store IRF with a longer horizon, no identification and thinning
 irf(x) <- irf(x, bv_irf(horizon = 24L, identification = FALSE), n_thin = 5L)
@@ -101,6 +101,10 @@ summary(x)
 
 # Limit the summary to responses of variable #2
 summary(x, vars_response = 2L)
+
+# Compute IRF using an external instrument
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, instrument = data("mpi"),
+                             proxyvar = "FEDFUNDS"), n_thin = 1L)
 }
 }
 \seealso{

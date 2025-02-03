@@ -43,6 +43,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Nirai Tomass [contributor]
+  \item Gabriel Konecny [contributor]
   \item Michael McCracken [data contributor]
   \item Serena Ng [data contributor]
 }

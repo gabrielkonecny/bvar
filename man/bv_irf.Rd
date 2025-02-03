@@ -40,19 +40,20 @@ value is \code{NULL}. Note that in order to be fully identified at least
 \item{sign_lim}{Integer scalar. Maximum number of tries to find suitable
 matrices to for fitting sign or zero and sign restrictions.}
 
-\item{instrument}{Numeric vector. If provided, the identification is performed using proxy
-SVAR. Since the residuals and instrument need not to have equal length in general,
-user is expected to provide a common index (rownames) for the data and the
-instrument. See examples and helper function \emph{set_dates}. This can be
-avoided by setting \emph{manual_matching} to TRUE.}
+\item{instrument}{Numeric vector. If provided, the identification is performed
+using proxy SVAR. The implemented proxy SVAR allows for different length of
+instrument and residuals. In such case a common subset is used for the
+identification. To subset correct observations names(instrument) and
+ rownames(data) are used - they need to have same format. See details}
 
 \item{proxyvar}{character string. Variable for which instrument is provided.
 Needs to correspond to one of the column names of the data used in
 \emph{bvar}.}
 
-\item{manual_matching}{If set to TRUE, user is not expected to specify common
-index for the data and instrument. Instead the length of instrument needs to
-match the length of residuals (= length(data inputted in bvar) - lags).}
+\item{manual_matching}{If set to TRUE, no indices for the data and instrument
+are needed. Instead, the length of the instrument needs to
+match the length of the residuals. This rules out the possibility of performing
+identification on a proper subset of residuals.}
 }
 \value{
 Returns a named list of class \code{bv_irf} with options for
@@ -72,13 +73,20 @@ Rubio-Ramirez and Waggoner, 2018) or using an external instrument
 }
 \details{
 Identification can be performed via Cholesky decomposition, sign
-restrictions, zero and sign restrictions or using external instrument.
+restrictions, zero and sign restrictions or using an external instrument.
 The algorithm for generating suitable sign restrictions follows
 Rubio-Ramirez, Waggoner and Zha (2010), while the one for zero and sign
 restrictions follows Arias, Rubio-Ramirez and Waggoner (2018).
 Note the possiblity of finding no suitable zero/sign restrictions.
 The proxy SVAR identification follows the implementation in
-Miranda-Agrippino and Ricco (2021).
+Miranda-Agrippino and Ricco (2021) and examples make use of their instrument
+extended in Degasperi and Ricco (2021). The implemented proxy SVAR allows
+for identification using subsample of residuals. This can be useful if the
+instrument is not available for the full sample period. Therefore only
+a part of the residuals corresponding to the length of instrument is used.
+For correct selection of residuals user is expected to specify rownames(data)
+and names(instrument) in same format. The subset is then based on string
+matching.
 }
 \examples{
 # Set impulse responses to a horizon of 20 time periods and enable FEVD
@@ -100,38 +108,33 @@ bv_irf(instrument = istrument)
 # Prepare to estimate unidentified impulse responses
 bv_irf(identification = FALSE)
 
-# Prepare to estimate SVAR-IV using an indexed instrument for monetary policy shocks
-mpi_named <- readRDS(file = "./data/instrument_MAR21.rds")
-bv_irf(instrument = mpi_named, manual_matching = FALSE,
-       proxyvar = "GS1")
-
-# Prepare to estimate SVAR-IV using an instrument for monetary policy shocks
-# (where its length is equal to the length of the residuals)
-mpi_exact <- readRDS(file = "./data/instrument_MAR21.rds")
-bv_irf(instrument = mpi_exact, manual_matching = TRUE,
-       proxyvar = "GS1")
+# Prepare to estimate SVAR-IV using an indexed instrument for monetary policy
+# shocks. names(instrument) need to be same format as rownames(data), since
+# subsetting is based on string matching.
+bv_irf(instrument = data("mpi"), manual_matching = FALSE, proxyvar = "FEDFUNDS")
 
 }
 \references{
-Rubio-Ramirez, J. F. and Waggoner, D. F. and Zha, T. (2010) Structural
-  Vector Autoregressions: Theory of Identification and Algorithms for
-  Inference. \emph{The Review of Economic Studies}, \bold{77}, 665-696,
-  doi:10.1111/j.1467-937X.2009.00578.x.
-  Arias, J.E. and Rubio-Ramirez, J. F. and Waggoner, D. F. (2018)
+Arias, J.E. and Rubio-Ramirez, J. F. and Waggoner, D. F. (2018)
   Inference Based on Structural Vector Autoregressions Identifiied with
   Sign and Zero Restrictions: Theory and Applications.
   \emph{Econometrica}, \bold{86}, 2, 685-720,
-  doi:10.3982/ECTA14468.
-  Miranda-Agrippino, S., & Ricco, G. (2021). The transmission of monetary
+  doi:10.3982/ECTA14468. \cr
+ Degasperi, R. and Ricco, G., 2021.
+  Information and policy shocks in monetary surprises. Working Paper. \cr
+ Mertens, K., and Ravn, M. O. (2013). The dynamic effects of personal and
+  corporate income tax changes in the United States. \emph{American
+  economic review}, \bold{103(4)}, 1212-1247, doi:10.1257/aer.103.4.1212. \cr
+ Miranda-Agrippino, S., & Ricco, G. (2021). The transmission of monetary
   policy shocks. \emph{American Economic Journal: Macroeconomics},
-   \bold{13(3)}, 74-107, doi:10.1257/mac.20180124
-   Stock, J. H., and Watson, M. W. (2012). Disentangling the Channels of the
-   2007-2009 Recession (No. w18094) \emph{National Bureau of Economic
-   Research}, doi:10.3386/w18094.
-   Mertens, K., and Ravn, M. O. (2013). The dynamic effects of personal and
-   corporate income tax changes in the United States. \emph{American
-   economic review}, \bold{103(4)}, 1212-1247,
-   doi:10.1257/aer.103.4.1212.
+  \bold{13(3)}, 74-107, doi:10.1257/mac.20180124 \cr
+ Rubio-Ramirez, J. F. and Waggoner, D. F. and Zha, T. (2010) Structural
+  Vector Autoregressions: Theory of Identification and Algorithms for
+  Inference. \emph{The Review of Economic Studies}, \bold{77}, 665-696,
+  doi:10.1111/j.1467-937X.2009.00578.x. \cr
+ Stock, J. H., and Watson, M. W. (2012). Disentangling the Channels of the
+  2007-2009 Recession (No. w18094) \emph{National Bureau of Economic
+  Research}, doi:10.3386/w18094.
 }
 \seealso{
 \code{\link{irf.bvar}}; \code{\link{plot.bvar_irf}}
