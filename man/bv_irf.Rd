@@ -111,7 +111,8 @@ bv_irf(identification = FALSE)
 # Prepare to estimate SVAR-IV using an indexed instrument for monetary policy
 # shocks. names(instrument) need to be same format as rownames(data), since
 # subsetting is based on string matching.
-bv_irf(instrument = data("mpi"), manual_matching = FALSE, proxyvar = "FEDFUNDS")
+data("mpi")
+bv_irf(instrument = instrument, manual_matching = FALSE, proxyvar = "FEDFUNDS")
 
 }
 \references{

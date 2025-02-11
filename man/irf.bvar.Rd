@@ -102,8 +102,9 @@ summary(x)
 # Limit the summary to responses of variable #2
 summary(x, vars_response = 2L)
 
-# Compute IRF using an external instrument
-irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, instrument = data("mpi"),
+# Compute IRF using an external instrument for monetary policy shocks
+data("mpi")
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, instrument = instrument,
                              proxyvar = "FEDFUNDS"), n_thin = 1L)
 }
 }

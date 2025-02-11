@@ -10,6 +10,9 @@ A \code{numeric vector} object with dates as rownames.
 \source{
 \url{https://github.com/riccardo-degasperi/info-policy-surprises}
 }
+\usage{
+data(mpi)
+}
 \description{
 We make use of time series at monthly frequency of the high-frequency
 instruments for monetary policy and information shocks as defined in

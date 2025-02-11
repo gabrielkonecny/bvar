@@ -373,23 +373,6 @@ if(manual_matching == TRUE){
   return(out)
 }
 
-# display_matrix <- function(mat) {
-#   n <- nrow(mat)
-#
-#   if (n > 6) {
-#     # Display the first 3 rows
-#     print(head(mat, 3))
-#
-#     # Print dots to indicate omitted rows
-#     cat("...\n...\n...\n")
-#
-#     # Display the last 3 rows
-#     print(tail(mat, 3))
-#   } else {
-#     # If the matrix has 6 or fewer rows, display the entire matrix
-#     print(mat)
-#   }
-# }
 
 get_swapped_index <- function(residuals, proxyvar) {
   # Find the column index of the proxy variable
@@ -404,5 +387,4 @@ get_swapped_index <- function(residuals, proxyvar) {
 
   return(index)
 }
-
 

@@ -15,6 +15,7 @@
 #'
 #' @name mpi
 #' @docType data
+#' @usage data(mpi)
 #' @format A \code{numeric vector} object with dates as rownames.
 #' @keywords monetary policy; shocks; instrument
 #' @references
