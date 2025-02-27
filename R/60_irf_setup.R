@@ -69,19 +69,19 @@
 #'   Sign and Zero Restrictions: Theory and Applications.
 #'   \emph{Econometrica}, \bold{86}, 2, 685-720,
 #'   doi:10.3982/ECTA14468. \cr
-#'  Degasperi, R. and Ricco, G., 2021.
-#'   Information and policy shocks in monetary surprises. Working Paper. \cr
-#'  Mertens, K., and Ravn, M. O. (2013). The dynamic effects of personal and
+#'  Degasperi, R. and Ricco, G. (2021)
+#'   Information and policy shocks in monetary surprises. Working paper, University of Warwick. \cr
+#'  Mertens, K., and Ravn, M. O. (2013) The dynamic effects of personal and
 #'   corporate income tax changes in the United States. \emph{American
 #'   economic review}, \bold{103(4)}, 1212-1247, doi:10.1257/aer.103.4.1212. \cr
-#'  Miranda-Agrippino, S., & Ricco, G. (2021). The transmission of monetary
+#'  Miranda-Agrippino, S., & Ricco, G. (2021) The transmission of monetary
 #'   policy shocks. \emph{American Economic Journal: Macroeconomics},
 #'   \bold{13(3)}, 74-107, doi:10.1257/mac.20180124 \cr
 #'  Rubio-Ramirez, J. F. and Waggoner, D. F. and Zha, T. (2010) Structural
 #'   Vector Autoregressions: Theory of Identification and Algorithms for
 #'   Inference. \emph{The Review of Economic Studies}, \bold{77}, 665-696,
 #'   doi:10.1111/j.1467-937X.2009.00578.x. \cr
-#'  Stock, J. H., and Watson, M. W. (2012). Disentangling the Channels of the
+#'  Stock, J. H., and Watson, M. W. (2012) Disentangling the Channels of the
 #'   2007-2009 Recession (No. w18094) \emph{National Bureau of Economic
 #'   Research}, doi:10.3386/w18094.
 
