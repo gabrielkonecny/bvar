@@ -1,0 +1,83 @@
+---
+title: "Proxy SVAR Identification"
+output: html_document
+---
+
+```{r setup, echo=FALSE, message=FALSE}
+devtools::load_all()
+```
+
+
+This demonstration shows how to perform identification using an external instrument in an SVAR setting (Stock and Watson 2012, Mertens and Ravn 2013), which we refer to as proxy SVAR or SVAR-IV. The framework implemented here allows for different lengths of residuals and the instrument. This can be useful if the data for reduced form estimation is available for longer than the instrument used for identification. To implement this in the existing framework, we use rownames and names to subset residuals and the instrument, respectively. 
+
+Consider monthly observations of industrial production, consumer price index, unemployment rate, and 1-year treasury rate from 1979 to 2019 and an instrument for monetary policy shocks from 1991 to 2017. In this case, the proxied variable is the 1-year treasury rate (GS1). We use the instrument for monetary policy shocks from Miranda-Agrippino and Ricco (2021), extended in Degasperi and Ricco (2021).
+
+```{r}
+# Access the fred_md dataset
+data <- fred_md[,c("INDPRO","CPIAUCSL", "UNRATE", "GS1")]
+
+# Transform and subset to 1979-2019
+data <- fred_transform(data, codes = c(4, 4, 1, 1))[241:732,]
+
+# Estimate a BVAR using 12 lags, default settings and very few draws
+x <- bvar(data, lags = 12, n_draw = 600L, n_burn = 100L, verbose = FALSE)
+
+# Compute IRF using an external instrument for monetary policy shocks
+data("mpi")
+irf(x) <- irf.bvar(x, bv_irf(horizon = 24L, instrument = instrument,
+                             proxyvar = "GS1"), n_thin = 1L)
+
+```
+
+The responses can be plotted by selecting the impulse variable. Note that only shocks to proxied variable are sensibly identified. 
+
+```{r, fig.align='center'}
+margins <- c(2,10,2,10)
+plot(irf(x), vars_impulse = "GS1", mar = margins)
+```
+
+Note that rownames(data) and names(instrument) need to have the same format. This could be e.g. a simple numeric index or a specific date format. In the example above we used dates in format "YYYY-MM-DD":
+
+```{r}
+range(rownames(data))
+range(names(instrument))
+```
+
+This ensures that the correct subset of residuals can be matched with the instrument.
+
+
+Special Cases
+-------
+
+As a special case we might have data and instrument of the same length.
+```{r}
+data2 <- data[145:468,]
+
+# Estimate a BVAR using 12 lags, default settings and very few draws
+x2 <- bvar(data2, lags = 12, n_draw = 600L, n_burn = 100L, verbose = FALSE)
+
+irf(x2) <- irf.bvar(x2, bv_irf(horizon = 24L, instrument = instrument,
+                             proxyvar = "GS1"), n_thin = 1L)
+```
+Notice that the residuals are shorter than the data by the amount of the *lags* used in bvar. If the objective is to use the full sample of the instrument and the full sample of residuals, we can specify data to start *lags* observations before the instrument.
+
+```{r}
+data3 <- data[133:468,]
+
+# Estimate a BVAR using 12 lags, default settings and very few draws
+x3 <- bvar(data3, lags = 12, n_draw = 600L, n_burn = 100L, verbose = FALSE)
+
+irf(x3) <- irf.bvar(x3, bv_irf(horizon = 24L, instrument = instrument,
+                             proxyvar = "GS1"), n_thin = 1L)
+```
+
+References
+-------
+Degasperi, R. and Ricco, G. (2021) Information and policy shocks in monetary surprises. Working paper, *University of Warwick*.
+
+Mertens, K., and Ravn, M. O. (2013) The dynamic effects of personal and corporate income tax changes in the United States. *American economic review*, 103(4), 1212-1247, DOI: [10.1257/aer.103.4.1212](https://doi.org/10.1257/aer.103.4.1212).
+
+Miranda-Agrippino, S., & Ricco, G. (2021) The transmission of monetary policy shocks. *American Economic Journal: Macroeconomics*, 13(3), 74-107, DOI: [10.1257/mac.20180124](https://doi.org/10.1257/mac.20180124).
+
+Stock, J. H., and Watson, M. W. (2012) Disentangling the Channels of the 2007-2009 Recession (No. w18094). *National Bureau of Economic Research*, DOI: [10.3386/w18094](https://doi.org/10.3386/w18094).
+
