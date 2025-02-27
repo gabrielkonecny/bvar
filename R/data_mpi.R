@@ -25,4 +25,4 @@
 #'    Degasperi, R. and Ricco, G., 2021.
 #'    Information and policy shocks in monetary surprises. Working Paper.
 #' @source \url{https://github.com/riccardo-degasperi/info-policy-surprises}
-NULL
+"mpi"

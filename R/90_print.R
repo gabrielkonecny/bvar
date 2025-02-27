@@ -45,9 +45,9 @@ print.check_iv <- function(out, ...) {
   # Get the number of matched dates and display the first and last matched observations
   num_matches <- length(out$common_dates)
   matched_display <- paste0(
-    out$common_dates[1], " (value ", format(out$instrument_shortened[out$common_dates[1]], scientific = TRUE),
+    out$common_dates[1], " (instrument value ", format(out$instrument_shortened[out$common_dates[1]], scientific = TRUE),
     ") until ",
-    out$common_dates[num_matches], " (value ", format(out$instrument_shortened[out$common_dates[num_matches]], scientific = TRUE),
+    out$common_dates[num_matches], " (", format(out$instrument_shortened[out$common_dates[num_matches]], scientific = TRUE),
     ")"
   )
 
